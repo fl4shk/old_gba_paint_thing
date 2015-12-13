@@ -1,7 +1,9 @@
 syn keyword CTagsFunction main
+syn keyword CTagsDefinedName test_widget_class_hpp misc_includes_hpp
+syn keyword CTagsClass test_widget
 
 " Matches for file main.cpp:
 if (has_key(b:TagHighlightPrivate, "NormalisedPath") && b:TagHighlightPrivate["NormalisedPath"] == "main.cpp") || TagHighlight#Option#GetOption("IgnoreFileScope")
-	syn keyword CTagsType s8 u8 u32 s16 u64 u16 s64 s32 uint
+	syn keyword CTagsType s16 u16 s64 s8 u32 u64 u8 uint s32
 	
 endif

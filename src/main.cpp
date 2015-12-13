@@ -6,8 +6,18 @@ typedef uint32_t u32; typedef int32_t s32;
 typedef uint64_t u64; typedef int64_t s64;
 typedef unsigned int uint;
 
+#include "misc_includes.hpp"
+
 
 int main( int argc, char** argv )
 {
-	return 0;
+	QApplication app( argc, argv );
+	
+	test_widget window;
+	
+	//window.resize( 300, 200 );
+	//window.setWindowTitle("Hello there!");
+	//window.show();
+	
+	return app.exec();
 }

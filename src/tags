@@ -5,10 +5,15 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
 main	main.cpp	/^int main( int argc, char** argv )$/;"	kind:f	signature:( int argc, char** argv )
+misc_includes_hpp	misc_includes.hpp	2;"	kind:d
 s16	main.cpp	/^typedef uint16_t u16; typedef int16_t s16;$/;"	kind:t	file:
 s32	main.cpp	/^typedef uint32_t u32; typedef int32_t s32;$/;"	kind:t	file:
 s64	main.cpp	/^typedef uint64_t u64; typedef int64_t s64;$/;"	kind:t	file:
 s8	main.cpp	/^typedef uint8_t u8; typedef int8_t s8;$/;"	kind:t	file:
+test_widget	test_widget_class.hpp	/^	inline test_widget( QWidget* parent = 0 ) : QWidget(parent)$/;"	kind:f	class:test_widget	access:public	signature:( QWidget* parent = 0 )
+test_widget	test_widget_class.hpp	/^class test_widget : public QWidget$/;"	kind:c	inherits:QWidget
+test_widget::test_widget	test_widget_class.hpp	/^	inline test_widget( QWidget* parent = 0 ) : QWidget(parent)$/;"	kind:f	class:test_widget	access:public	signature:( QWidget* parent = 0 )
+test_widget_class_hpp	test_widget_class.hpp	2;"	kind:d
 u16	main.cpp	/^typedef uint16_t u16; typedef int16_t s16;$/;"	kind:t	file:
 u32	main.cpp	/^typedef uint32_t u32; typedef int32_t s32;$/;"	kind:t	file:
 u64	main.cpp	/^typedef uint64_t u64; typedef int64_t s64;$/;"	kind:t	file:
