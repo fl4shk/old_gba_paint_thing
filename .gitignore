@@ -1,0 +1,6 @@
+objs/*
+deps/*
+moc_sources/*
+*.swp
+*.swo
+gba_paint_thing
