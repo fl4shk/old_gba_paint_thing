@@ -1,46 +1,90 @@
 #include "primary_widget_class.hpp"
 
+const QString primary_widget::laugh_icon_file_name
+	= QString("icons/laugh_icon_32x32.png"),
+	primary_widget::quit_icon_file_name
+	= QString("icons/quit_32x32.png");
+
 
 primary_widget::primary_widget( QWidget* parent ) : QMainWindow(parent)
 {
 	generate_menus();
-	generate_buttons();
+	generate_toolbar();
 	generate_central_widget();
 }
 
 void primary_widget::generate_menus()
 {
-	laugh_action = new QAction( "&Laugh", this );
-	quit_action = new QAction( "&Quit", this );
+	menu_laugh_action = new QAction( "&Laugh", this );
+	menu_quit_action = new QAction( "&Quit", this );
 	
-	connect( laugh_action, &QAction::triggered, this, 
+	connect( menu_laugh_action, &QAction::triggered, this, 
 		&primary_widget::laugh );
-	connect( quit_action, &QAction::triggered, this, 
+	connect( menu_quit_action, &QAction::triggered, this, 
 		&primary_widget::quit );
 	
 	file_menu = menuBar()->addMenu("&File");
 	second_menu = menuBar()->addMenu("&Second");
 	
-	file_menu->addAction(laugh_action);
-	file_menu->addAction(quit_action);
+	file_menu->addAction(menu_laugh_action);
+	file_menu->addAction(menu_quit_action);
 	
-	second_menu->addAction(quit_action);
+	second_menu->addAction(menu_quit_action);
 }
 
-void primary_widget::generate_buttons()
+void primary_widget::generate_toolbar()
 {
-	laugh_button = new QPushButton( "Laugh", this );
-	connect( laugh_button, &QPushButton::clicked, this, 
+	//laugh_button = new QPushButton( "Laugh", this );
+	//quit_button = new QPushButton( "Quit", this );
+	//
+	//connect( laugh_button, &QPushButton::clicked, this, 
+	//	&primary_widget::laugh );
+	//connect( quit_button, &QPushButton::clicked, this, 
+	//	&primary_widget::quit );
+	
+	QPixmap laugh_pixmap(laugh_icon_file_name), 
+		quit_pixmap(quit_icon_file_name);
+	
+	if ( laugh_pixmap.isNull() )
+	{
+		cout << "Unable to open " << laugh_icon_file_name.toStdString()
+			<< " for reading!  ";
+		quit_non_slot();
+	}
+	
+	if ( quit_pixmap.isNull() )
+	{
+		cout << "Unable to open " << quit_icon_file_name.toStdString()
+			<< " for reading!  ";
+		quit_non_slot();
+	}
+	
+	toolbar = addToolBar("main toolbar");
+	toolbar_laugh_action = toolbar->addAction( QIcon(laugh_pixmap), 
+		"Laugh" );
+	toolbar_quit_action = toolbar->addAction( QIcon(quit_pixmap), 
+		"Quit" );
+	
+	connect( toolbar_laugh_action, &QAction::triggered, this,
 		&primary_widget::laugh );
+	connect( toolbar_quit_action, &QAction::triggered, this,
+		&primary_widget::quit );
+	
 }
 
 void primary_widget::generate_central_widget()
 {
 	the_grid_widget = new grid_widget(this);
-	the_grid_widget->layout->addWidget( laugh_button, 1, 1, 1, 1 );
-	QPushButton* test_button = new QPushButton( "Test", this );
-	the_grid_widget->layout->addWidget( test_button, 1, 2, 1, 1 );
+	the_grid_widget->layout->setSpacing(1);
+	
+	QPushButton* button_1 = new QPushButton( "Button 1", this );
+	the_grid_widget->layout->addWidget( button_1, 2, 1, 1, 1 );
+	
+	QPushButton* button_2 = new QPushButton( "Button 2", this );
+	the_grid_widget->layout->addWidget( button_2, 2, 2, 1, 1 );
+	
 	setCentralWidget(the_grid_widget);
+	
 }
 
 void primary_widget::laugh()
@@ -50,8 +94,7 @@ void primary_widget::laugh()
 
 void primary_widget::quit()
 {
-	show_quit_message();
-	qApp->quit();
+	quit_non_slot();
 }
 
 

@@ -2,38 +2,43 @@
 #define primary_widget_class_hpp
 
 #include "misc_includes.hpp"
+#include "layout_widget_classes.hpp"
 
-class grid_widget : public QWidget
-{
-public:		// functions
-	inline grid_widget( QWidget* parent = 0 ) : QWidget(parent)
-	{
-		layout = new QGridLayout(this);
-	}
-	
-public:		// variables
-	QGridLayout* layout;
-	
-};
 
 class primary_widget : public QMainWindow
 {
 	Q_OBJECT
 	
+	
+protected:		// variables
+	// Menu Stuff
+	QMenu* file_menu, * second_menu;
+	
+	QAction* menu_laugh_action, * menu_quit_action;
+	
+	// Toolbar Stuff
+	static const QString laugh_icon_file_name, quit_icon_file_name;
+	QToolBar* toolbar;
+	QAction* toolbar_laugh_action, * toolbar_quit_action;
+	
+	// The TEMPORARY central widget.
+	grid_widget* the_grid_widget;
+	
+	
 public:		// functions
 	primary_widget( QWidget* parent = 0 );
 	
+	
 protected:		// functions
 	void generate_menus();
-	void generate_buttons();
+	void generate_toolbar();
 	void generate_central_widget();
 	
 	inline void keyPressEvent( QKeyEvent* event )
 	{
 		if ( event->key() == Qt::Key_Escape )
 		{
-			show_quit_message();
-			qApp->quit();
+			quit_non_slot();
 		}
 	}
 	inline void closeEvent( QCloseEvent* event )
@@ -43,23 +48,19 @@ protected:		// functions
 	
 	inline void show_quit_message()
 	{
-		cout << "Bye-bye!\n";
+		cout << "Exiting....\n";
+	}
+	
+	inline void quit_non_slot()
+	{
+		show_quit_message();
+		qApp->quit();
 	}
 	
 protected slots:		// slots
 	void laugh();
 	void quit();
 	
-protected:		// variables
-	QPushButton* laugh_button;
-	
-	//QVBoxLayout* main_layout;
-	//QGridLayout* secondary_layout;
-	grid_widget* the_grid_widget;
-	
-	QMenu* file_menu, * second_menu;
-	
-	QAction* laugh_action, * quit_action;
 	
 };
 

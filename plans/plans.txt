@@ -1,0 +1,10 @@
+14:40 <FL4SHK> I don't know of anything that has all the features I want.
+14:41 <FL4SHK> I want support for exporting to these formats:  GBA/DS (they're the same), GB, GBC, SNES, and NES.
+14:42 <FL4SHK> I'm thinking that I'll use paletted PNGs as the working files exclusively.
+14:42 <FL4SHK> Maybe I'll support non-animated GIFs as well, since those are paletted AFAIK.
+14:43 <FL4SHK> Keeping the palette in a certain order is imperative.
+14:43 <FL4SHK> Mainly when different images need to share a palette.
+14:44 <FL4SHK> I don't know of anything that fits all those requirements.
+14:44 <FL4SHK> definitely nothing open source
+14:46 <FL4SHK> There's one thing I've been using so far that's great, but it's Windows-only and closed source.
+14:47 <FL4SHK> I would LIKE to not be tied to CPUs that implement only particular instruction sets.
