@@ -12,6 +12,7 @@ primary_widget::primary_widget( QWidget* parent ) : QMainWindow(parent)
 	connect( laugh_button, &QPushButton::clicked, this, 
 		&primary_widget::laugh );
 	
+	
 }
 
 void primary_widget::laugh()

@@ -36,6 +36,8 @@ protected:		// variables
 	QPushButton* laugh_button;
 	QGridLayout* grid_layout;
 	
+	QMenu* file_menu, * second_menu;
+	QAction* laugh_action;
 	
 };
 

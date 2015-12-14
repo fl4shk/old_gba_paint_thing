@@ -4,3 +4,5 @@ moc_sources/*
 *.swp
 *.swo
 gba_paint_thing
+src/tags
+src/types_c.taghl
