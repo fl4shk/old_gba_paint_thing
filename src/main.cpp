@@ -13,11 +13,11 @@ int main( int argc, char** argv )
 {
 	QApplication app( argc, argv );
 	
-	test_widget window;
+	primary_widget window;
 	
-	//window.resize( 300, 200 );
-	//window.setWindowTitle("Hello there!");
-	//window.show();
+	window.resize( 300, 200 );
+	window.setWindowTitle("Hello there!");
+	window.show();
 	
 	return app.exec();
 }

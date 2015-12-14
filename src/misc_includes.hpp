@@ -2,19 +2,47 @@
 #define misc_includes_hpp
 
 #include <iostream>
+#include <vector>
 using namespace std;
 
 #include <QApplication>
 #include <QWidget>
-
+#include <QIcon>
 #include <QFrame>
+#include <QGridLayout>
+#include <QPushButton>
+#include <QLabel>
+#include <QTextStream>
 
-#include <QImage>
+#include <QMenu>
+#include <QMenuBar>
+#include <QMainWindow>
+#include <QStatusBar>
+#include <QToolBar>
+#include <QTextEdit>
+
+#include <QDesktopWidget>
+
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLineEdit>
 
 #include <QKeyEvent>
+#include <QMoveEvent>
+#include <QCloseEvent>
 
+#include <QCheckBox>
 
-#include "test_widget_class.hpp"
+#include <QFont>
 
+#include <QInputDialog>
+
+#include <QPixmap>
+
+#include <QSplitter>
+
+#include <QPainter>
+
+#include "primary_widget_class.hpp"
 
 #endif		// misc_includes_hpp
