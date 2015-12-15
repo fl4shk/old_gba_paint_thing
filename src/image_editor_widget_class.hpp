@@ -3,14 +3,16 @@
 
 #include "misc_includes.hpp"
 
-class image_editor_widget : public QScrollArea
+class image_editor_widget : public QWidget
 {
 	Q_OBJECT
 	
 public:		// variables
 	static const QString default_parent_title;
 	
+	QGridLayout* grid_layout;
 	QWidget* parent;
+	QScrollArea* scroll_area;
 	QLabel* image_label;
 	QImage image;
 	bool modified;
@@ -36,6 +38,7 @@ protected slots:		// slots.
 	// It is not yet certain whether these are needed for the
 	// image_editor_widget class.
 	
+	void hello();
 	
 };
 
