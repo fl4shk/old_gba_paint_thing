@@ -15,8 +15,6 @@ int main( int argc, char** argv )
 	
 	primary_widget window;
 	
-	window.resize( 300, 200 );
-	window.setWindowTitle("GBA Paint Thing");
 	window.show();
 	
 	return app.exec();
