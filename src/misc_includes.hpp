@@ -31,6 +31,8 @@ using namespace std;
 #include <QMoveEvent>
 #include <QCloseEvent>
 #include <QMouseEvent>
+#include <QPaintEvent>
+#include <QResizeEvent>
 
 #include <QCheckBox>
 
@@ -43,5 +45,8 @@ using namespace std;
 #include <QSplitter>
 
 #include <QPainter>
+#include <QImage>
+#include <QRect>
+
 
 #endif		// misc_includes_hpp
