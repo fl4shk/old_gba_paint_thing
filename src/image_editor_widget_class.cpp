@@ -20,10 +20,10 @@ image_editor_widget::image_editor_widget( QWidget* s_parent )
 	
 	grid_layout->addWidget( scroll_area, 1, 1 );
 	
-	QPushButton* test_button = new QPushButton( "Hello", this );
-	grid_layout->addWidget( test_button, 1, 2 );
+	QPushButton* hello_button = new QPushButton( "Hello", this );
+	grid_layout->addWidget( hello_button, 1, 2 );
 	
-	connect( test_button, &QPushButton::clicked, this,
+	connect( hello_button, &QPushButton::clicked, this,
 		&image_editor_widget::hello );
 	
 }
