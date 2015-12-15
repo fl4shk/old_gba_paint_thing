@@ -35,18 +35,16 @@ using namespace std;
 #include <QResizeEvent>
 
 #include <QCheckBox>
-
 #include <QFont>
-
 #include <QInputDialog>
-
-#include <QPixmap>
-
 #include <QSplitter>
 
+#include <QPixmap>
 #include <QPainter>
 #include <QImage>
 #include <QRect>
+#include <QScrollArea>
+#include <QPalette>
 
 
 #endif		// misc_includes_hpp

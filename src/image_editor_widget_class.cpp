@@ -1,10 +1,12 @@
 #include "image_editor_widget_class.hpp"
 
 image_editor_widget::image_editor_widget( QWidget* parent ) 
-	: QWidget(parent)
+	: QScrollArea(parent)
 {
 	setAttribute(Qt::WA_StaticContents);
 	//setMouseTracking(true);
+	
+	modified = false;
 }
 
 bool image_editor_widget::open_image( const QString& file_name )
@@ -13,6 +15,9 @@ bool image_editor_widget::open_image( const QString& file_name )
 	{
 		return false;
 	}
+	image_label = new QLabel;
+	image_label->setPixmap(QPixmap::fromImage(image));
+	setWidget(image_label);
 	
 	update();
 	
@@ -36,14 +41,22 @@ void image_editor_widget::mouseReleaseEvent( QMouseEvent* event )
 
 void image_editor_widget::paintEvent( QPaintEvent* event )
 {
-	QPainter painter(this);
-	QRect rect = event->rect();
-	painter.drawImage( rect, image, rect );
+	for ( int i=0; i<10; ++i )
+	{
+		for ( int j=0; j<10; ++j )
+		{
+			image.setPixel( 100 + i, 100 + j, 0 );
+		}
+	}
+	
+	image_label->setPixmap(QPixmap::fromImage(image));
+	//setWidget(image_label);
+	//update();
 }
 
 void image_editor_widget::resizeEvent( QResizeEvent* event )
 {
-	QWidget::resizeEvent(event);
+	QScrollArea::resizeEvent(event);
 }
 
 

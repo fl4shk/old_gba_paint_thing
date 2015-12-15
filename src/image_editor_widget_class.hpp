@@ -3,12 +3,14 @@
 
 #include "misc_includes.hpp"
 
-class image_editor_widget : public QWidget
+class image_editor_widget : public QScrollArea
 {
 	Q_OBJECT
 	
 public:		// variables
+	QLabel* image_label;
 	QImage image;
+	bool modified;
 	
 public:		// functions
 	image_editor_widget( QWidget* parent = 0 );
