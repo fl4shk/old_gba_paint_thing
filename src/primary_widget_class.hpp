@@ -3,6 +3,7 @@
 
 #include "misc_includes.hpp"
 #include "layout_widget_classes.hpp"
+#include "image_editor_widget_class.hpp"
 
 
 class primary_widget : public QMainWindow
@@ -21,8 +22,11 @@ protected:		// variables
 	QToolBar* toolbar;
 	QAction* toolbar_laugh_action, * toolbar_quit_action;
 	
-	// The TEMPORARY central widget.
-	grid_widget* the_grid_widget;
+	//// The TEMPORARY central widget.
+	//grid_widget* the_grid_widget;
+	
+	// The central widget.
+	image_editor_widget* the_central_widget;
 	
 	
 public:		// functions
@@ -56,6 +60,11 @@ protected:		// functions
 		show_quit_message();
 		qApp->quit();
 	}
+	
+	//inline void mouseMoveEvent( QMouseEvent* event )
+	//{
+	//	the_central_widget->mouseMoveEvent(event);
+	//}
 	
 protected slots:		// slots
 	void laugh();

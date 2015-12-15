@@ -74,17 +74,21 @@ void primary_widget::generate_toolbar()
 
 void primary_widget::generate_central_widget()
 {
-	the_grid_widget = new grid_widget(this);
-	the_grid_widget->layout->setSpacing(1);
+	//the_grid_widget = new grid_widget(this);
+	//the_grid_widget->layout->setSpacing(1);
+	//the_grid_widget->layout
+	//
+	//QPushButton* button_1 = new QPushButton( "Button 1", this );
+	//the_grid_widget->layout->addWidget( button_1, 2, 1, 1, 1 );
+	//
+	//QPushButton* button_2 = new QPushButton( "Button 2", this );
+	//the_grid_widget->layout->addWidget( button_2, 2, 2, 1, 1 );
+	//
+	//setCentralWidget(the_grid_widget);
 	
-	QPushButton* button_1 = new QPushButton( "Button 1", this );
-	the_grid_widget->layout->addWidget( button_1, 2, 1, 1, 1 );
+	the_central_widget = new image_editor_widget(this);
 	
-	QPushButton* button_2 = new QPushButton( "Button 2", this );
-	the_grid_widget->layout->addWidget( button_2, 2, 2, 1, 1 );
-	
-	setCentralWidget(the_grid_widget);
-	
+	setCentralWidget(the_central_widget);
 }
 
 void primary_widget::laugh()

@@ -30,6 +30,7 @@ using namespace std;
 #include <QKeyEvent>
 #include <QMoveEvent>
 #include <QCloseEvent>
+#include <QMouseEvent>
 
 #include <QCheckBox>
 
@@ -42,7 +43,5 @@ using namespace std;
 #include <QSplitter>
 
 #include <QPainter>
-
-#include "primary_widget_class.hpp"
 
 #endif		// misc_includes_hpp

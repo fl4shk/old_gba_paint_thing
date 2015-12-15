@@ -7,7 +7,7 @@ typedef uint64_t u64; typedef int64_t s64;
 typedef unsigned int uint;
 
 #include "misc_includes.hpp"
-
+#include "primary_widget_class.hpp"
 
 int main( int argc, char** argv )
 {
