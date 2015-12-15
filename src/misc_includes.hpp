@@ -33,6 +33,7 @@ using namespace std;
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QResizeEvent>
+#include <QShowEvent>
 
 #include <QCheckBox>
 #include <QFont>
@@ -45,6 +46,17 @@ using namespace std;
 #include <QRect>
 #include <QScrollArea>
 #include <QPalette>
+#include <QScrollBar>
+#include <QColor>
+
+#include <QTimer>
+
+
+
+#include <SFML/Graphics.hpp>
+
+
+#include "misc_types.hpp"
 
 
 #endif		// misc_includes_hpp

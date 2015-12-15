@@ -12,9 +12,9 @@ LD=g++
 DEFINES=-DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 
 BASE_FLAGS=-Wall -O3 -march=native $(DEFINES)
-CXX_FLAGS=-std=c++14 -I/usr/include $(BASE_FLAGS) `pkg-config --cflags Qt5Core Qt5Gui Qt5Widgets`
+CXX_FLAGS=-std=c++14 -I/usr/include $(BASE_FLAGS) `pkg-config --cflags Qt5Core Qt5Gui Qt5Widgets sfml-graphics` -fPIC
 S_FLAGS=
-LD_FLAGS=-lm `pkg-config --libs Qt5Core Qt5Gui Qt5Widgets` 
+LD_FLAGS=-lm `pkg-config --libs Qt5Core Qt5Gui Qt5Widgets sfml-graphics` 
 
 OBJDIR=objs
 DEPDIR=deps

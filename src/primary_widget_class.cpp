@@ -12,11 +12,12 @@ primary_widget::primary_widget( QWidget* parent ) : QMainWindow(parent)
 	generate_toolbar();
 	generate_central_widget();
 	
-	if ( !the_central_widget->open_image(QString("background_tiles.png")) )
-	{
-		cout << "Error opening background_tiles.png!\n";
-		quit_non_slot();
-	}
+	//if ( !the_central_widget->open_image
+	//	(QString("background_tiles_modded.png")) )
+	//{
+	//	cout << "Error opening background_tiles_modded.png!\n";
+	//	quit_non_slot();
+	//}
 }
 
 void primary_widget::generate_menus()
