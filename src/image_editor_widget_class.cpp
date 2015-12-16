@@ -69,9 +69,10 @@ bool image_editor_widget::zoom_in()
 	//image = image.scaled( image.width() << 1, image.height() << 1 );
 	//update_image_label();
 	
-	sf::View current_view = canvas_widget->getView();
-	current_view.zoom(2.0f);
-	canvas_widget->setView(current_view);
+	sf::View view = canvas_widget->getView();
+	view.zoom(2.0f);
+	canvas_widget->setView(view);
+	canvas_widget->zoomed_in_recently = true;
 	
 	adjust_scroll_bar(scroll_area->horizontalScrollBar());
 	adjust_scroll_bar(scroll_area->verticalScrollBar());
@@ -91,9 +92,10 @@ bool image_editor_widget::zoom_out()
 	//image = image.scaled( image.width() >> 1, image.height() >> 1 );
 	//update_image_label();
 	
-	sf::View current_view = canvas_widget->getView();
-	current_view.zoom(0.5f);
-	canvas_widget->setView(current_view);
+	sf::View view = canvas_widget->getView();
+	view.zoom(0.5f);
+	canvas_widget->setView(view);
+	canvas_widget->zoomed_out_recently = true;
 	
 	adjust_scroll_bar(scroll_area->horizontalScrollBar());
 	adjust_scroll_bar(scroll_area->verticalScrollBar());

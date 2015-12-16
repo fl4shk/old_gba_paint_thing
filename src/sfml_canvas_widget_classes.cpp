@@ -81,7 +81,8 @@ sfml_canvas_widget::sfml_canvas_widget( QWidget* s_parent,
 	const QPoint& s_position, const QSize& s_size, 
 	const std::string& s_image_file_name ) 
 	: sfml_canvas_widget_base( s_parent, s_position, s_size ),
-	image_file_name(s_image_file_name), scale_factor(1)
+	image_file_name(s_image_file_name), scale_factor(1), 
+	zoomed_in_recently(false), zoomed_out_recently(false)
 {
 }
 
@@ -106,12 +107,39 @@ bool sfml_canvas_widget::open_image()
 
 void sfml_canvas_widget::on_update()
 {
-	texture.loadFromImage(image);
-	full_resize(QSize( sprite.getTexture()->getSize().x * scale_factor,
-		sprite.getTexture()->getSize().y * scale_factor ));
+	if ( zoomed_in_recently || zoomed_out_recently )
+	{
+		texture.loadFromImage(image);
+		full_resize(QSize( sprite.getTexture()->getSize().x * scale_factor,
+			sprite.getTexture()->getSize().y * scale_factor ));
+		
+		sf::View view = getDefaultView();
+		
+		view.setCenter( 0.0f, 0.0f );
+		
+		view.move( (float)( sprite.getTexture()->getSize().x ) / 2.0f,
+			(float)( sprite.getTexture()->getSize().y ) / 2.0f );
+		
+		view.zoom( 1.0f / (float)scale_factor );
+		
+		setView(view);
+	}
+	
+	if ( zoomed_in_recently )
+	{
+		cout << "zoomed_in_recently == true\n";
+		zoomed_in_recently = false;
+	}
+	if ( zoomed_out_recently )
+	{
+		cout << "zoomed_out_recently == true\n";
+		zoomed_out_recently = false;
+	}
+	
 	//clear(sf::Color( 0, 128, 0 ));
 	clear(sf::Color::White);
 	draw(sprite);
 }
+
 
 

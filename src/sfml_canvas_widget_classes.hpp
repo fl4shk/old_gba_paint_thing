@@ -36,6 +36,8 @@ public:		// variables
 	sf::Sprite sprite;
 	u32 scale_factor;
 	
+	bool zoomed_in_recently, zoomed_out_recently;
+	
 public:		// functions
 	sfml_canvas_widget( QWidget* s_parent, const QPoint& s_position,
 		const QSize& s_size, const std::string& s_image_file_name );
