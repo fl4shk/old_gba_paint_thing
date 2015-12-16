@@ -29,7 +29,7 @@ public:		// functions
 	bool open_image( const std::string& s_image_file_name );
 	
 protected:		// functions
-	void adjust_scroll_bar( QScrollBar* scroll_bar );
+	//void adjust_scroll_bar( QScrollBar* scroll_bar );
 	bool zoom_in();
 	bool zoom_out();
 	

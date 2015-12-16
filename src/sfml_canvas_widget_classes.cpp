@@ -125,13 +125,16 @@ void sfml_canvas_widget::on_update()
 {
 	if ( zoomed_recently )
 	{
-		texture.loadFromImage(image);
+		zoomed_recently = false;
 		full_resize(QSize( sprite.getTexture()->getSize().x * scale_factor,
 			sprite.getTexture()->getSize().y * scale_factor ));
 		
 		sprite.setScale( scale_factor, scale_factor );
-		
-		zoomed_recently = false;
+	}
+	if ( modified_recently )
+	{
+		modified_recently = false;
+		texture.loadFromImage(image);
 	}
 	
 	//clear(sf::Color( 0, 128, 0 ));

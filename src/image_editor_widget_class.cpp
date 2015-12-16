@@ -61,13 +61,13 @@ bool image_editor_widget::open_image
 	return canvas_widget->open_image(s_image_file_name);
 }
 
-void image_editor_widget::adjust_scroll_bar( QScrollBar* scroll_bar )
-{
-	scroll_bar->setValue
-		( ( canvas_widget->scale_factor * scroll_bar->value() ) 
-		+ ( ( canvas_widget->scale_factor - 1 ) 
-		* ( scroll_bar->pageStep() / 2 ) ));
-}
+//void image_editor_widget::adjust_scroll_bar( QScrollBar* scroll_bar )
+//{
+//	scroll_bar->setValue
+//		( ( canvas_widget->scale_factor * scroll_bar->value() ) 
+//		+ ( ( canvas_widget->scale_factor - 1 ) 
+//		* ( scroll_bar->pageStep() / 2 ) ));
+//}
 
 bool image_editor_widget::zoom_in()
 {
@@ -79,8 +79,6 @@ bool image_editor_widget::zoom_in()
 	canvas_widget->scale_factor <<= 1;
 	canvas_widget->zoomed_recently = true;
 	
-	//adjust_scroll_bar(scroll_area->horizontalScrollBar());
-	//adjust_scroll_bar(scroll_area->verticalScrollBar());
 	scroll_area->horizontalScrollBar()->setValue
 		( scroll_area->horizontalScrollBar()->value() << 1 );
 	scroll_area->verticalScrollBar()->setValue
@@ -100,8 +98,6 @@ bool image_editor_widget::zoom_out()
 	canvas_widget->scale_factor >>= 1;
 	canvas_widget->zoomed_recently = true;
 	
-	//adjust_scroll_bar(scroll_area->horizontalScrollBar());
-	//adjust_scroll_bar(scroll_area->verticalScrollBar());
 	scroll_area->horizontalScrollBar()->setValue
 		( scroll_area->horizontalScrollBar()->value() >> 1 );
 	scroll_area->verticalScrollBar()->setValue
@@ -125,28 +121,36 @@ void image_editor_widget::keyPressEvent( QKeyEvent* event )
 
 void image_editor_widget::mousePressEvent( QMouseEvent* event )
 {
-	cout << event->x() << ", " << event->y() << endl;
-	
 	// This converts the clicked coordinate to pixel coordinates.
 	sf::Vector2i event_pos_in_scroll_area_coords 
 		= widget_pos_to_scroll_area_coords( event->x(), event->y() );
-	cout << event_pos_in_scroll_area_coords.x << ", "
-		<< event_pos_in_scroll_area_coords.y << endl;
 	
-	sf::Vector2f event_pos_in_canvas_coords
+	sf::Vector2f event_pos_in_image_coords
 		= canvas_widget->mapPixelToCoords( event_pos_in_scroll_area_coords,
 		canvas_widget->get_apparent_view() );
-	cout << event_pos_in_canvas_coords.x << ", " 
-		<< event_pos_in_canvas_coords.y << "\n\n";
+	
+	sf::Vector2i event_pos_in_image_pixel_coords
+		= sf::Vector2i( (int)event_pos_in_image_coords.x,
+		(int)event_pos_in_image_coords.y );
+	
+	if ( event_pos_in_image_pixel_coords.x < 0 
+		|| ( event_pos_in_image_pixel_coords.x 
+		> (int)canvas_widget->image.getSize().x )
+		|| event_pos_in_image_pixel_coords.y < 0 
+		|| ( event_pos_in_image_pixel_coords.y 
+		> (int)canvas_widget->image.getSize().y ) )
+	{
+		return;
+	}
+	
+	//cout << "valid image coordinate!\n";
+	
+	canvas_widget->modified_recently = true;
+	canvas_widget->image.setPixel( (u32)event_pos_in_image_pixel_coords.x,
+		(u32)event_pos_in_image_pixel_coords.y, sf::Color( 0, 0, 0 ) );
 	
 	
-	
-	//image.setPixel( event->x() / (int)canvas_widget->scale_factor, 
-	//	event->y() / (int)canvas_widget->scale_factor, 
-	//	QColor( 255, 0, 0 ).rgb() );
-	//update_image_label();
-	//
-	//modified = true;
+	prev_mouse_pos = event->pos();
 }
 
 void image_editor_widget::mouseMoveEvent( QMouseEvent* event )
