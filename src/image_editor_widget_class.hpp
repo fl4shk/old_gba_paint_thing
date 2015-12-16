@@ -42,6 +42,9 @@ protected:		// functions
 	
 protected slots:		// slots.
 	void hello();
+	void show_horizontal_scroll_bar_stuff();
+	void show_vertical_scroll_bar_stuff();
+	
 	
 };
 

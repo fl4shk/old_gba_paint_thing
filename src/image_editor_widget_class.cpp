@@ -17,7 +17,7 @@ image_editor_widget::image_editor_widget( QWidget* s_parent )
 	canvas_widget->open_image();
 	
 	hbox_layout = new QHBoxLayout(this);
-	//vbox_layout = new QVBoxLayout(this);
+	vbox_layout = new QVBoxLayout(this);
 	scroll_area = new QScrollArea(this);
 	
 	scroll_area->setWidget(canvas_widget);
@@ -27,20 +27,21 @@ image_editor_widget::image_editor_widget( QWidget* s_parent )
 	scroll_area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	scroll_area->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	
-	//QPushButton* hello_button = new QPushButton( "Hello", this );
-	//QPushButton* hello_button_2 = new QPushButton( "Hello 2", this );
-	//
-	//connect( hello_button, &QPushButton::clicked, this,
-	//	&image_editor_widget::hello );
-	//connect( hello_button_2, &QPushButton::clicked, this,
-	//	&image_editor_widget::hello );
-	//
-	//
-	//vbox_layout->addWidget( hello_button );
-	//vbox_layout->addWidget( hello_button_2 );
-	//
+	QPushButton* show_horiz_sb_stuff_button 
+		= new QPushButton( "Show Horiz", this );
+	QPushButton* show_vert_sb_stuff_button 
+		= new QPushButton( "Show Vert", this );
+	
+	connect( show_horiz_sb_stuff_button, &QPushButton::clicked, this,
+		&image_editor_widget::show_horizontal_scroll_bar_stuff );
+	connect( show_vert_sb_stuff_button, &QPushButton::clicked, this,
+		&image_editor_widget::show_vertical_scroll_bar_stuff );
+	
+	vbox_layout->addWidget(show_horiz_sb_stuff_button);
+	vbox_layout->addWidget(show_vert_sb_stuff_button);
+	
 	//hbox_layout->addLayout( vbox_layout, Qt::AlignTop | Qt::AlignRight );
-	////hbox_layout->addLayout( vbox_layout );
+	hbox_layout->addLayout( vbox_layout );
 	
 }
 
@@ -69,9 +70,6 @@ bool image_editor_widget::zoom_in()
 	//image = image.scaled( image.width() << 1, image.height() << 1 );
 	//update_image_label();
 	
-	sf::View view = canvas_widget->getView();
-	view.zoom(2.0f);
-	canvas_widget->setView(view);
 	canvas_widget->zoomed_in_recently = true;
 	
 	adjust_scroll_bar(scroll_area->horizontalScrollBar());
@@ -92,9 +90,6 @@ bool image_editor_widget::zoom_out()
 	//image = image.scaled( image.width() >> 1, image.height() >> 1 );
 	//update_image_label();
 	
-	sf::View view = canvas_widget->getView();
-	view.zoom(0.5f);
-	canvas_widget->setView(view);
 	canvas_widget->zoomed_out_recently = true;
 	
 	adjust_scroll_bar(scroll_area->horizontalScrollBar());
@@ -118,23 +113,13 @@ void image_editor_widget::keyPressEvent( QKeyEvent* event )
 
 void image_editor_widget::mousePressEvent( QMouseEvent* event )
 {
-	//cout << event->x() << ", " << event->y() << endl;
-	//if ( event->x() < 0 
-	//	|| event->x() > ( image.width() / (int)canvas_widget->scale_factor )
-	//	|| event->y() < 0 
-	//	|| event->y() > ( image.height() 
-	//	/ (int)canvas_widget->scale_factor ) )
-	//{
-	//	return;
-	//}
-	
 	cout << event->x() << ", " << event->y() << endl;
-	//cout << ( event->x() / (int)canvas_widget->scale_factor ) << ", " 
-	//	<< ( event->y() / (int)canvas_widget->scale_factor ) << endl;
 	
+	// This converts the clicked coordinate to pixel coordinates.
 	sf::Vector2f event_pos_in_canvas_coords 
-		= canvas_widget->mapPixelToCoords( sf::Vector2i( event->x(),
-		event->y() ) );
+		= canvas_widget->mapPixelToCoords( sf::Vector2i
+		( event->x() + scroll_area->horizontalScrollBar()->value(),
+		event->y() + scroll_area->verticalScrollBar()->value() ) );
 	cout << event_pos_in_canvas_coords.x << ", " 
 		<< event_pos_in_canvas_coords.y << endl;
 	
@@ -149,6 +134,8 @@ void image_editor_widget::mousePressEvent( QMouseEvent* event )
 void image_editor_widget::mouseMoveEvent( QMouseEvent* event )
 {
 	mousePressEvent(event);
+	//cout << scroll_area->viewport()->size().width() << ", "
+	//	<< scroll_area->viewport()->size().height() << endl;
 }
 
 //void image_editor_widget::mouseReleaseEvent( QMouseEvent* event )
@@ -162,4 +149,18 @@ void image_editor_widget::hello()
 	cout << "Hello!\n";
 }
 
+
+void image_editor_widget::show_horizontal_scroll_bar_stuff()
+{
+	cout << scroll_area->horizontalScrollBar()->value() << " "
+		<< scroll_area->horizontalScrollBar()->minimum() << " "
+		<< scroll_area->horizontalScrollBar()->maximum() << endl;
+}
+
+void image_editor_widget::show_vertical_scroll_bar_stuff()
+{
+	cout << scroll_area->verticalScrollBar()->value() << " "
+		<< scroll_area->verticalScrollBar()->minimum() << " "
+		<< scroll_area->verticalScrollBar()->maximum() << endl;
+}
 
