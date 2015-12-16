@@ -4,7 +4,7 @@ const QString image_editor_widget::default_parent_title
 	= QString("GBA Paint Thing");
 
 image_editor_widget::image_editor_widget( QWidget* s_parent ) 
-	: QWidget(s_parent), parent(s_parent), modified(false)
+	: QWidget(s_parent), parent(s_parent)
 {
 	setAttribute(Qt::WA_StaticContents);
 	//setMouseTracking(true);
@@ -77,13 +77,14 @@ bool image_editor_widget::zoom_in()
 	}
 	
 	canvas_widget->scale_factor <<= 1;
-	//image = image.scaled( image.width() << 1, image.height() << 1 );
-	//update_image_label();
+	canvas_widget->zoomed_recently = true;
 	
-	canvas_widget->zoomed_in_recently = true;
-	
-	adjust_scroll_bar(scroll_area->horizontalScrollBar());
-	adjust_scroll_bar(scroll_area->verticalScrollBar());
+	//adjust_scroll_bar(scroll_area->horizontalScrollBar());
+	//adjust_scroll_bar(scroll_area->verticalScrollBar());
+	scroll_area->horizontalScrollBar()->setValue
+		( scroll_area->horizontalScrollBar()->value() << 1 );
+	scroll_area->verticalScrollBar()->setValue
+		( scroll_area->verticalScrollBar()->value() << 1 );
 	
 	return true;
 }
@@ -97,13 +98,14 @@ bool image_editor_widget::zoom_out()
 	}
 	
 	canvas_widget->scale_factor >>= 1;
-	//image = image.scaled( image.width() >> 1, image.height() >> 1 );
-	//update_image_label();
+	canvas_widget->zoomed_recently = true;
 	
-	canvas_widget->zoomed_out_recently = true;
-	
-	adjust_scroll_bar(scroll_area->horizontalScrollBar());
-	adjust_scroll_bar(scroll_area->verticalScrollBar());
+	//adjust_scroll_bar(scroll_area->horizontalScrollBar());
+	//adjust_scroll_bar(scroll_area->verticalScrollBar());
+	scroll_area->horizontalScrollBar()->setValue
+		( scroll_area->horizontalScrollBar()->value() >> 1 );
+	scroll_area->verticalScrollBar()->setValue
+		( scroll_area->verticalScrollBar()->value() >> 1 );
 	
 	return true;
 }
@@ -136,6 +138,8 @@ void image_editor_widget::mousePressEvent( QMouseEvent* event )
 		canvas_widget->get_apparent_view() );
 	cout << event_pos_in_canvas_coords.x << ", " 
 		<< event_pos_in_canvas_coords.y << "\n\n";
+	
+	
 	
 	//image.setPixel( event->x() / (int)canvas_widget->scale_factor, 
 	//	event->y() / (int)canvas_widget->scale_factor, 

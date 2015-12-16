@@ -40,7 +40,8 @@ public:		// variables
 	sf::Texture texture;
 	sf::Sprite sprite;
 	
-	bool zoomed_in_recently, zoomed_out_recently;
+	//bool zoomed_in_recently, zoomed_out_recently;
+	bool modified_recently, zoomed_recently;
 	u32 scale_factor;
 	float view_center_x, view_center_y;
 	

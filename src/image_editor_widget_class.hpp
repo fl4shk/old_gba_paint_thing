@@ -18,8 +18,10 @@ public:		// variables
 	
 	sfml_canvas_widget* canvas_widget; 
 	
-	bool modified;
+	//bool modified;
 	//u32 scale_factor;
+	
+	QPoint prev_mouse_pos;
 	
 public:		// functions
 	image_editor_widget( QWidget* s_parent = 0 );
