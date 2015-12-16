@@ -11,33 +11,33 @@ class image_editor_widget : public QWidget
 public:		// variables
 	static const QString default_parent_title;
 	
-	QGridLayout* grid_layout;
+	QHBoxLayout* hbox_layout;
+	QVBoxLayout* vbox_layout;
 	QWidget* parent;
 	QScrollArea* scroll_area;
 	
 	sfml_canvas_widget* canvas_widget; 
 	
 	bool modified;
-	
-	u32 scale_factor;
+	//u32 scale_factor;
 	
 public:		// functions
 	image_editor_widget( QWidget* s_parent = 0 );
 	
-	bool open_image( const QString& file_name );
+	bool open_image( const std::string& s_image_file_name );
 	
 protected:		// functions
-	//void adjust_scroll_bar( QScrollBar* scroll_bar );
-	//bool zoom_in();
-	//bool zoom_out();
+	void adjust_scroll_bar( QScrollBar* scroll_bar );
+	bool zoom_in();
+	bool zoom_out();
 	
 	// Events
 	void keyPressEvent( QKeyEvent* event );
 	void mousePressEvent( QMouseEvent* event );
 	void mouseMoveEvent( QMouseEvent* event );
-	//void mouseReleaseEvent( QMouseEvent* event );
-	void paintEvent( QPaintEvent* event );
-	//void resizeEvent( QResizeEvent* event );
+	////void mouseReleaseEvent( QMouseEvent* event );
+	//void paintEvent( QPaintEvent* event );
+	////void resizeEvent( QResizeEvent* event );
 	
 	
 protected slots:		// slots.

@@ -48,8 +48,8 @@ using namespace std;
 #include <QPalette>
 #include <QScrollBar>
 #include <QColor>
-
 #include <QTimer>
+#include <QButtonGroup>
 
 
 

@@ -77,3 +77,41 @@ void sfml_canvas_widget_base::paintEvent( QPaintEvent* event )
 }
 
 
+sfml_canvas_widget::sfml_canvas_widget( QWidget* s_parent, 
+	const QPoint& s_position, const QSize& s_size, 
+	const std::string& s_image_file_name ) 
+	: sfml_canvas_widget_base( s_parent, s_position, s_size ),
+	image_file_name(s_image_file_name), scale_factor(1)
+{
+}
+
+
+
+bool sfml_canvas_widget::open_image()
+{
+	if ( !image.loadFromFile(image_file_name) )
+	{
+		return false;
+	}
+	
+	texture.loadFromImage(image);
+	sprite.setTexture(texture);
+	full_resize(QSize( sprite.getTexture()->getSize().x,
+		sprite.getTexture()->getSize().y ));
+	
+	return true;
+}
+
+
+
+void sfml_canvas_widget::on_update()
+{
+	texture.loadFromImage(image);
+	full_resize(QSize( sprite.getTexture()->getSize().x * scale_factor,
+		sprite.getTexture()->getSize().y * scale_factor ));
+	//clear(sf::Color( 0, 128, 0 ));
+	clear(sf::Color::White);
+	draw(sprite);
+}
+
+

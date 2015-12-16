@@ -30,27 +30,40 @@ protected:		// functions
 class sfml_canvas_widget : public sfml_canvas_widget_base
 {
 public:		// variables
-	
+	std::string image_file_name;
+	sf::Image image;
+	sf::Texture texture;
+	sf::Sprite sprite;
+	u32 scale_factor;
 	
 public:		// functions
-	inline sfml_canvas_widget( QWidget* s_parent, const QPoint& s_position,
-		const QSize& s_size ) : sfml_canvas_widget_base( s_parent,
-		s_position, s_size )
+	sfml_canvas_widget( QWidget* s_parent, const QPoint& s_position,
+		const QSize& s_size, const std::string& s_image_file_name );
+	
+	inline void full_resize( const QSize& n_size )
 	{
+		resize(n_size);
+		sf::RenderWindow::create(winId());
 	}
 	
+	bool open_image();
+	
+	inline bool open_image( const std::string& n_image_file_name )
+	{
+		image_file_name = n_image_file_name;
+		return open_image();
+	}
 	
 protected:		// functions
 	
 	inline void on_init()
 	{
 		cout << "sfml_canvas_widget initialized!\n";
+		
+		//image.loadFromFile(string("the_powerup_gfx.png"));
+		open_image();
 	}
-	inline void on_update()
-	{
-		//clear(sf::Color( 0, 128, 0 ));
-		clear( sf::Color( 
-	}
+	void on_update();
 	
 };
 
