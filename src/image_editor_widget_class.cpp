@@ -132,7 +132,8 @@ void image_editor_widget::mousePressEvent( QMouseEvent* event )
 		<< event_pos_in_scroll_area_coords.y << endl;
 	
 	sf::Vector2f event_pos_in_canvas_coords
-		= canvas_widget->mapPixelToCoords(event_pos_in_scroll_area_coords);
+		= canvas_widget->mapPixelToCoords( event_pos_in_scroll_area_coords,
+		canvas_widget->get_apparent_view() );
 	cout << event_pos_in_canvas_coords.x << ", " 
 		<< event_pos_in_canvas_coords.y << "\n\n";
 	

@@ -135,6 +135,8 @@ void sfml_canvas_widget::on_update()
 		full_resize(QSize( sprite.getTexture()->getSize().x * scale_factor,
 			sprite.getTexture()->getSize().y * scale_factor ));
 		
+		sprite.setScale( scale_factor, scale_factor );
+		
 		//sf::View view = getDefaultView();
 		//
 		//view.setCenter( 0.0f, 0.0f );
@@ -145,7 +147,7 @@ void sfml_canvas_widget::on_update()
 		//view.zoom( 1.0f / (float)scale_factor );
 		//
 		//setView(view);
-		setView( get_apparent_view() );
+		//setView( get_apparent_view() );
 	}
 	
 	if ( zoomed_in_recently )
@@ -159,7 +161,6 @@ void sfml_canvas_widget::on_update()
 		zoomed_out_recently = false;
 	}
 	
-	//sprite.setScale( scale_factor, scale_factor );
 	
 	//clear(sf::Color( 0, 128, 0 ));
 	clear(sf::Color::White);
