@@ -29,14 +29,20 @@ protected:		// functions
 
 class sfml_canvas_widget : public sfml_canvas_widget_base
 {
+protected:		// variables
+	// This is necessary for converting coordinates relative to the parent
+	// widget to coordinates relative to the image.
+	sf::View apparent_view;
+	
 public:		// variables
 	std::string image_file_name;
 	sf::Image image;
 	sf::Texture texture;
 	sf::Sprite sprite;
-	u32 scale_factor;
 	
 	bool zoomed_in_recently, zoomed_out_recently;
+	u32 scale_factor;
+	float view_center_x, view_center_y;
 	
 public:		// functions
 	sfml_canvas_widget( QWidget* s_parent, const QPoint& s_position,
@@ -55,6 +61,8 @@ public:		// functions
 		image_file_name = n_image_file_name;
 		return open_image();
 	}
+	
+	const sf::View& get_apparent_view();
 	
 protected:		// functions
 	

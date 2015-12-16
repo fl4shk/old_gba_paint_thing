@@ -39,11 +39,21 @@ protected:		// functions
 	//void paintEvent( QPaintEvent* event );
 	////void resizeEvent( QResizeEvent* event );
 	
+	inline const sf::Vector2i widget_pos_to_scroll_area_coords
+		( int widget_x, int widget_y ) const
+	{
+		return sf::Vector2i( widget_x - scroll_area->geometry().x()
+			+ scroll_area->horizontalScrollBar()->value(),
+			widget_y - scroll_area->geometry().y()
+			+ scroll_area->verticalScrollBar()->value() );
+	}
+	
 	
 protected slots:		// slots.
 	void hello();
 	void show_horizontal_scroll_bar_stuff();
 	void show_vertical_scroll_bar_stuff();
+	void show_geometry_stuff();
 	
 	
 };

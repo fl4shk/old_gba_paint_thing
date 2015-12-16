@@ -27,18 +27,28 @@ image_editor_widget::image_editor_widget( QWidget* s_parent )
 	scroll_area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	scroll_area->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	
+	
+	// Show Horizontal ScrollBar Stuff
 	QPushButton* show_horiz_sb_stuff_button 
 		= new QPushButton( "Show Horiz", this );
-	QPushButton* show_vert_sb_stuff_button 
-		= new QPushButton( "Show Vert", this );
-	
 	connect( show_horiz_sb_stuff_button, &QPushButton::clicked, this,
 		&image_editor_widget::show_horizontal_scroll_bar_stuff );
+	vbox_layout->addWidget(show_horiz_sb_stuff_button);
+	
+	// Show Vertical ScrollBar Stuff
+	QPushButton* show_vert_sb_stuff_button 
+		= new QPushButton( "Show Vert", this );
 	connect( show_vert_sb_stuff_button, &QPushButton::clicked, this,
 		&image_editor_widget::show_vertical_scroll_bar_stuff );
-	
-	vbox_layout->addWidget(show_horiz_sb_stuff_button);
 	vbox_layout->addWidget(show_vert_sb_stuff_button);
+	
+	// Show Geometry Stuff
+	QPushButton* show_geometry_stuff_button
+		= new QPushButton( "Show Geometry", this );
+	connect( show_geometry_stuff_button, &QPushButton::clicked, this,
+		&image_editor_widget::show_geometry_stuff );
+	vbox_layout->addWidget(show_geometry_stuff_button);
+	
 	
 	//hbox_layout->addLayout( vbox_layout, Qt::AlignTop | Qt::AlignRight );
 	hbox_layout->addLayout( vbox_layout );
@@ -116,12 +126,15 @@ void image_editor_widget::mousePressEvent( QMouseEvent* event )
 	cout << event->x() << ", " << event->y() << endl;
 	
 	// This converts the clicked coordinate to pixel coordinates.
-	sf::Vector2f event_pos_in_canvas_coords 
-		= canvas_widget->mapPixelToCoords( sf::Vector2i
-		( event->x() + scroll_area->horizontalScrollBar()->value(),
-		event->y() + scroll_area->verticalScrollBar()->value() ) );
+	sf::Vector2i event_pos_in_scroll_area_coords 
+		= widget_pos_to_scroll_area_coords( event->x(), event->y() );
+	cout << event_pos_in_scroll_area_coords.x << ", "
+		<< event_pos_in_scroll_area_coords.y << endl;
+	
+	sf::Vector2f event_pos_in_canvas_coords
+		= canvas_widget->mapPixelToCoords(event_pos_in_scroll_area_coords);
 	cout << event_pos_in_canvas_coords.x << ", " 
-		<< event_pos_in_canvas_coords.y << endl;
+		<< event_pos_in_canvas_coords.y << "\n\n";
 	
 	//image.setPixel( event->x() / (int)canvas_widget->scale_factor, 
 	//	event->y() / (int)canvas_widget->scale_factor, 
@@ -163,4 +176,13 @@ void image_editor_widget::show_vertical_scroll_bar_stuff()
 		<< scroll_area->verticalScrollBar()->minimum() << " "
 		<< scroll_area->verticalScrollBar()->maximum() << endl;
 }
+
+void image_editor_widget::show_geometry_stuff()
+{
+	cout << scroll_area->geometry().x() << " " 
+		<< scroll_area->geometry().y() << endl;
+	cout << scroll_area->frameGeometry().x() << " " 
+		<< scroll_area->frameGeometry().y() << endl;
+}
+
 

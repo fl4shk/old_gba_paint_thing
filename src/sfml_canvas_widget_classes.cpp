@@ -81,9 +81,11 @@ sfml_canvas_widget::sfml_canvas_widget( QWidget* s_parent,
 	const QPoint& s_position, const QSize& s_size, 
 	const std::string& s_image_file_name ) 
 	: sfml_canvas_widget_base( s_parent, s_position, s_size ),
-	image_file_name(s_image_file_name), scale_factor(1), 
-	zoomed_in_recently(false), zoomed_out_recently(false)
+	image_file_name(s_image_file_name), zoomed_in_recently(false), 
+	zoomed_out_recently(false), scale_factor(1), view_center_x(0.0f),
+	view_center_y(0.0f)
 {
+	apparent_view = getDefaultView();
 }
 
 
@@ -103,26 +105,47 @@ bool sfml_canvas_widget::open_image()
 	return true;
 }
 
+const sf::View& sfml_canvas_widget::get_apparent_view()
+{
+	apparent_view = getDefaultView();
+	
+	apparent_view.setCenter( view_center_x, view_center_y );
+	
+	apparent_view.move( (float)( sprite.getTexture()->getSize().x ) / 2.0f,
+		(float)( sprite.getTexture()->getSize().y ) / 2.0f );
+		
+	apparent_view.zoom( 1.0f / (float)scale_factor );
+	
+	return apparent_view;
+}
 
 
 void sfml_canvas_widget::on_update()
 {
+	//cout << "parent frameGeometry().x():  " << parent->frameGeometry().x() 
+	//	<< ";\t" << "canvas_widget frameGeometry().x():  " 
+	//	<< frameGeometry().x() << endl;
+	//cout << "parent frameGeometry().y():  " << parent->frameGeometry().y() 
+	//	<< ";\t" << "canvas_widget frameGeometry().y():  " 
+	//	<< frameGeometry().y() << endl;
+	
 	if ( zoomed_in_recently || zoomed_out_recently )
 	{
 		texture.loadFromImage(image);
 		full_resize(QSize( sprite.getTexture()->getSize().x * scale_factor,
 			sprite.getTexture()->getSize().y * scale_factor ));
 		
-		sf::View view = getDefaultView();
-		
-		view.setCenter( 0.0f, 0.0f );
-		
-		view.move( (float)( sprite.getTexture()->getSize().x ) / 2.0f,
-			(float)( sprite.getTexture()->getSize().y ) / 2.0f );
-		
-		view.zoom( 1.0f / (float)scale_factor );
-		
-		setView(view);
+		//sf::View view = getDefaultView();
+		//
+		//view.setCenter( 0.0f, 0.0f );
+		//
+		//view.move( (float)( sprite.getTexture()->getSize().x ) / 2.0f,
+		//	(float)( sprite.getTexture()->getSize().y ) / 2.0f );
+		//
+		//view.zoom( 1.0f / (float)scale_factor );
+		//
+		//setView(view);
+		setView( get_apparent_view() );
 	}
 	
 	if ( zoomed_in_recently )
@@ -135,6 +158,8 @@ void sfml_canvas_widget::on_update()
 		cout << "zoomed_out_recently == true\n";
 		zoomed_out_recently = false;
 	}
+	
+	//sprite.setScale( scale_factor, scale_factor );
 	
 	//clear(sf::Color( 0, 128, 0 ));
 	clear(sf::Color::White);
