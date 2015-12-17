@@ -50,6 +50,9 @@ protected:		// functions
 			+ scroll_area->verticalScrollBar()->value() );
 	}
 	
+	void draw_line( const sf::Vector2i& pos_0, const sf::Vector2i& pos_1,
+		const sf::Color& color );
+	
 	
 protected slots:		// slots.
 	void hello();
