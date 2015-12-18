@@ -120,6 +120,100 @@ const sf::View& sfml_canvas_widget::get_apparent_view()
 	return apparent_view;
 }
 
+// This is a purely integer-based line drawing algorithm.
+void sfml_canvas_widget::draw_line( const sf::Vector2i& pos_0, 
+	const sf::Vector2i& pos_1, const sf::Color& color )
+{
+	modified_recently = true;
+	
+	sf::Vector2i delta, pixel_coord, offset;
+	
+	delta = sf::Vector2i( pos_1.x - pos_0.x, pos_1.y - pos_0.y );
+	
+	if ( delta.x < 0 )
+	{
+		delta.x = -delta.x;
+	}
+	if ( delta.y < 0 )
+	{
+		delta.y = -delta.y;
+	}
+	
+	pixel_coord = pos_0;
+	
+	if ( pos_0.x > pos_1.x )
+	{
+		offset.x = -1;
+	}
+	else
+	{
+		offset.x = 1;
+	}
+	
+	if ( pos_0.y > pos_1.y )
+	{
+		offset.y = -1;
+	}
+	else
+	{
+		offset.y = 1;
+	}
+	
+	if ( point_is_in_image(pixel_coord) )
+	{
+		image.setPixel( (u32)pixel_coord.x, 
+			(u32)pixel_coord.y, color );
+	}
+	
+	if ( delta.x > delta.y )
+	{
+		s32 error = delta.x >> 1;
+		
+		while ( pixel_coord.x != pos_1.x )
+		{
+			error -= delta.y;
+			
+			if ( error < 0 )
+			{
+				pixel_coord.y += offset.y;
+				error += delta.x;
+			}
+			
+			pixel_coord.x += offset.x;
+			
+			if ( point_is_in_image(pixel_coord) )
+			{
+				image.setPixel( (u32)pixel_coord.x, 
+					(u32)pixel_coord.y, color );
+			}
+		}
+	}
+	else
+	{
+		s32 error = delta.y >> 1;
+		
+		while ( pixel_coord.y != pos_1.y )
+		{
+			error -= delta.x;
+			
+			if ( error < 0 )
+			{
+				pixel_coord.x += offset.x;
+				error += delta.y;
+			}
+			
+			pixel_coord.y += offset.y;
+			
+			if ( point_is_in_image(pixel_coord) )
+			{
+				image.setPixel( (u32)pixel_coord.x, 
+					(u32)pixel_coord.y, color );
+			}
+		}
+	}
+	
+}
+
 
 void sfml_canvas_widget::on_update()
 {

@@ -9,9 +9,10 @@ public:		// variables
 	sf::Image* canvas_widget_image;
 	
 	u32 current_color_index;
+	bool palette_modified_recently;
 	
 	static constexpr u32 num_colors_per_palette = 256;
-	array< sf::Color, num_colors_per_palette > palette;
+	static constexpr u32 palette_sprite_scale = 5;
 	array< sf::Image, num_colors_per_palette > palette_image_arr;
 	array< sf::Texture, num_colors_per_palette > palette_texture_arr;
 	array< sf::Sprite, num_colors_per_palette > palette_sprite_arr;
@@ -22,6 +23,7 @@ public:		// functions
 		const QPoint& s_position, const QSize& s_size, 
 		sf::Image* s_canvas_widget_image );
 	
+	//bool grab_palette_from_canvas_widget_image();
 	
 protected:		// functions
 	
@@ -29,8 +31,8 @@ protected:		// functions
 	{
 		cout << "palette_chooser_widget initalized!\n";
 		
-		
 	}
+	
 	void on_update();
 	
 };

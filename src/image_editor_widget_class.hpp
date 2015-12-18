@@ -50,17 +50,6 @@ protected:		// functions
 			+ scroll_area->verticalScrollBar()->value() );
 	}
 	
-	void draw_line( const sf::Vector2i& pos_0, 
-		const sf::Vector2i& pos_1, const sf::Color& color );
-	
-	inline bool point_is_in_image( const sf::Vector2i& pos )
-	{
-		return ( ( pos.x >= 0 )
-			&& ( pos.x < (int)canvas_widget->image.getSize().x )
-			&& ( pos.y >= 0 )
-			&& ( pos.y < (int)canvas_widget->image.getSize().y ) );
-	}
-	
 	
 protected slots:		// slots.
 	void hello();

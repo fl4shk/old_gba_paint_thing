@@ -122,14 +122,6 @@ void image_editor_widget::keyPressEvent( QKeyEvent* event )
 void image_editor_widget::mousePressEvent( QMouseEvent* event )
 {
 	// This converts the clicked coordinate to pixel coordinates.
-	//sf::Vector2i event_pos_in_scroll_area_coords 
-	//	= widget_pos_to_scroll_area_coords( event->x(), event->y() );
-	//
-	//sf::Vector2f event_pos_in_image_coords
-	//	= canvas_widget->mapPixelToCoords( event_pos_in_scroll_area_coords,
-	//	canvas_widget->get_apparent_view() );
-	
-	// This converts the clicked coordinate to pixel coordinates.
 	sf::Vector2f event_pos_in_image_coords
 		= canvas_widget->mapPixelToCoords( widget_pos_to_scroll_area_coords
 		( event->x(), event->y() ), canvas_widget->get_apparent_view() );
@@ -141,12 +133,11 @@ void image_editor_widget::mousePressEvent( QMouseEvent* event )
 	prev_mouse_pos = event->pos();
 	
 	// Check whether the mouse was clicked somewhere inside the image.
-	if ( !point_is_in_image(event_pos_in_image_pixel_coords) )
+	if ( !canvas_widget->point_is_in_image
+		(event_pos_in_image_pixel_coords) )
 	{
 		return;
 	}
-	
-	//cout << "valid image coordinate!\n";
 	
 	canvas_widget->modified_recently = true;
 	canvas_widget->image.setPixel( (u32)event_pos_in_image_pixel_coords.x,
@@ -156,7 +147,6 @@ void image_editor_widget::mousePressEvent( QMouseEvent* event )
 
 void image_editor_widget::mouseMoveEvent( QMouseEvent* event )
 {
-	
 	// This converts the clicked coordinate to pixel coordinates.
 	sf::Vector2f event_pos_in_image_coords
 		= canvas_widget->mapPixelToCoords( widget_pos_to_scroll_area_coords
@@ -167,7 +157,8 @@ void image_editor_widget::mouseMoveEvent( QMouseEvent* event )
 		(int)event_pos_in_image_coords.y );
 	
 	// Check whether the mouse was clicked somewhere inside the image.
-	if ( !point_is_in_image(event_pos_in_image_pixel_coords) )
+	if ( !canvas_widget->point_is_in_image
+		(event_pos_in_image_pixel_coords) )
 	{
 		prev_mouse_pos = event->pos();
 		return;
@@ -186,8 +177,8 @@ void image_editor_widget::mouseMoveEvent( QMouseEvent* event )
 	prev_mouse_pos = event->pos();
 	
 	
-	canvas_widget->modified_recently = true;
-	draw_line( prev_mouse_pos_in_image_pixel_coords,
+	//canvas_widget->modified_recently = true;
+	canvas_widget->draw_line( prev_mouse_pos_in_image_pixel_coords,
 		event_pos_in_image_pixel_coords, sf::Color::Black );
 	
 }
@@ -197,98 +188,6 @@ void image_editor_widget::mouseMoveEvent( QMouseEvent* event )
 //	//cout << event->x() << ", " << event->y() << endl;
 //}
 
-void image_editor_widget::draw_line( const sf::Vector2i& pos_0, 
-	const sf::Vector2i& pos_1, const sf::Color& color )
-{
-	sf::Vector2i delta, pixel_coord, offset;
-	
-	delta = sf::Vector2i( pos_1.x - pos_0.x, pos_1.y - pos_0.y );
-	
-	if ( delta.x < 0 )
-	{
-		delta.x = -delta.x;
-	}
-	if ( delta.y < 0 )
-	{
-		delta.y = -delta.y;
-	}
-	
-	pixel_coord = pos_0;
-	
-	if ( pos_0.x > pos_1.x )
-	{
-		offset.x = -1;
-	}
-	else
-	{
-		offset.x = 1;
-	}
-	
-	if ( pos_0.y > pos_1.y )
-	{
-		offset.y = -1;
-	}
-	else
-	{
-		offset.y = 1;
-	}
-	
-	if ( point_is_in_image(pixel_coord) )
-	{
-		canvas_widget->image.setPixel( (u32)pixel_coord.x, 
-			(u32)pixel_coord.y, color );
-	}
-	
-	if ( delta.x > delta.y )
-	{
-		s32 error = delta.x >> 1;
-		
-		while ( pixel_coord.x != pos_1.x )
-		{
-			error -= delta.y;
-			
-			if ( error < 0 )
-			{
-				pixel_coord.y += offset.y;
-				error += delta.x;
-			}
-			
-			pixel_coord.x += offset.x;
-			
-			if ( point_is_in_image(pixel_coord) )
-			{
-				canvas_widget->image.setPixel( (u32)pixel_coord.x, 
-					(u32)pixel_coord.y, color );
-			}
-		}
-		
-	}
-	else
-	{
-		s32 error = delta.y >> 1;
-		
-		while ( pixel_coord.y != pos_1.y )
-		{
-			error -= delta.x;
-			
-			if ( error < 0 )
-			{
-				pixel_coord.x += offset.x;
-				error += delta.y;
-			}
-			
-			pixel_coord.y += offset.y;
-			
-			if ( point_is_in_image(pixel_coord) )
-			{
-				canvas_widget->image.setPixel( (u32)pixel_coord.x, 
-					(u32)pixel_coord.y, color );
-			}
-		}
-		
-	}
-	
-}
 
 
 void image_editor_widget::hello()

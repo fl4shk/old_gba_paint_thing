@@ -66,6 +66,15 @@ public:		// functions
 	
 	const sf::View& get_apparent_view();
 	
+	inline bool point_is_in_image( const sf::Vector2i& pos )
+	{
+		return ( ( pos.x >= 0 ) && ( pos.x < (int)image.getSize().x )
+			&& ( pos.y >= 0 ) && ( pos.y < (int)image.getSize().y ) );
+	}
+	
+	void draw_line( const sf::Vector2i& pos_0, 
+		const sf::Vector2i& pos_1, const sf::Color& color );
+	
 protected:		// functions
 	
 	inline void on_init()

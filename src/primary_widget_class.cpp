@@ -6,7 +6,8 @@ const QString primary_widget::laugh_icon_file_name
 	= QString("icons/quit_32x32.png");
 
 
-primary_widget::primary_widget( QWidget* parent ) : QMainWindow(parent)
+primary_widget::primary_widget( vector<string>& s_argv_copy, 
+	QWidget* parent ) : QMainWindow(parent), argv_copy(s_argv_copy)
 {
 	generate_menus();
 	generate_toolbar();

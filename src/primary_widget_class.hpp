@@ -12,6 +12,8 @@ class primary_widget : public QMainWindow
 	
 	
 protected:		// variables
+	vector<string> argv_copy;
+	
 	// Menu Stuff
 	QMenu* file_menu, * second_menu;
 	
@@ -30,7 +32,7 @@ protected:		// variables
 	
 	
 public:		// functions
-	primary_widget( QWidget* parent = 0 );
+	primary_widget( vector<string>& s_argv_copy, QWidget* parent = 0 );
 	
 	
 protected:		// functions
