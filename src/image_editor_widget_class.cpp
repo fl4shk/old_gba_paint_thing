@@ -138,13 +138,10 @@ void image_editor_widget::mousePressEvent( QMouseEvent* event )
 		= sf::Vector2i( (int)event_pos_in_image_coords.x,
 		(int)event_pos_in_image_coords.y );
 	
+	prev_mouse_pos = event->pos();
+	
 	// Check whether the mouse was clicked somewhere inside the image.
-	if ( event_pos_in_image_pixel_coords.x < 0 
-		|| ( event_pos_in_image_pixel_coords.x 
-		> (int)canvas_widget->image.getSize().x )
-		|| event_pos_in_image_pixel_coords.y < 0 
-		|| ( event_pos_in_image_pixel_coords.y 
-		> (int)canvas_widget->image.getSize().y ) )
+	if ( !point_is_in_image(event_pos_in_image_pixel_coords) )
 	{
 		return;
 	}
@@ -155,11 +152,11 @@ void image_editor_widget::mousePressEvent( QMouseEvent* event )
 	canvas_widget->image.setPixel( (u32)event_pos_in_image_pixel_coords.x,
 		(u32)event_pos_in_image_pixel_coords.y, sf::Color( 0, 0, 0 ) );
 	
-	prev_mouse_pos = event->pos();
 }
 
 void image_editor_widget::mouseMoveEvent( QMouseEvent* event )
 {
+	
 	// This converts the clicked coordinate to pixel coordinates.
 	sf::Vector2f event_pos_in_image_coords
 		= canvas_widget->mapPixelToCoords( widget_pos_to_scroll_area_coords
@@ -170,13 +167,9 @@ void image_editor_widget::mouseMoveEvent( QMouseEvent* event )
 		(int)event_pos_in_image_coords.y );
 	
 	// Check whether the mouse was clicked somewhere inside the image.
-	if ( event_pos_in_image_pixel_coords.x < 0 
-		|| ( event_pos_in_image_pixel_coords.x 
-		> (int)canvas_widget->image.getSize().x )
-		|| event_pos_in_image_pixel_coords.y < 0 
-		|| ( event_pos_in_image_pixel_coords.y 
-		> (int)canvas_widget->image.getSize().y ) )
+	if ( !point_is_in_image(event_pos_in_image_pixel_coords) )
 	{
+		prev_mouse_pos = event->pos();
 		return;
 	}
 	
@@ -189,24 +182,14 @@ void image_editor_widget::mouseMoveEvent( QMouseEvent* event )
 		= sf::Vector2i( (int)prev_mouse_pos_in_image_coords.x,
 		(int)prev_mouse_pos_in_image_coords.y );
 	
-	if ( prev_mouse_pos_in_image_pixel_coords.x < 0 
-		|| ( prev_mouse_pos_in_image_pixel_coords.x 
-		> (int)canvas_widget->image.getSize().x )
-		|| prev_mouse_pos_in_image_pixel_coords.y < 0 
-		|| ( prev_mouse_pos_in_image_pixel_coords.y 
-		> (int)canvas_widget->image.getSize().y ) )
-	{
-		return;
-	}
 	
-	//cout << "valid image coordinate!\n";
+	prev_mouse_pos = event->pos();
+	
 	
 	canvas_widget->modified_recently = true;
 	draw_line( prev_mouse_pos_in_image_pixel_coords,
 		event_pos_in_image_pixel_coords, sf::Color::Black );
 	
-	
-	prev_mouse_pos = event->pos();
 }
 
 //void image_editor_widget::mouseReleaseEvent( QMouseEvent* event )
@@ -250,9 +233,11 @@ void image_editor_widget::draw_line( const sf::Vector2i& pos_0,
 		offset.y = 1;
 	}
 	
-	//m4_plot ( pixel_coord.x, pixel_coord.y, color_id, page );
-	canvas_widget->image.setPixel( (u32)pixel_coord.x, (u32)pixel_coord.y, 
-		color );
+	if ( point_is_in_image(pixel_coord) )
+	{
+		canvas_widget->image.setPixel( (u32)pixel_coord.x, 
+			(u32)pixel_coord.y, color );
+	}
 	
 	if ( delta.x > delta.y )
 	{
@@ -270,8 +255,11 @@ void image_editor_widget::draw_line( const sf::Vector2i& pos_0,
 			
 			pixel_coord.x += offset.x;
 			
-			canvas_widget->image.setPixel( (u32)pixel_coord.x, 
-				(u32)pixel_coord.y, color );
+			if ( point_is_in_image(pixel_coord) )
+			{
+				canvas_widget->image.setPixel( (u32)pixel_coord.x, 
+					(u32)pixel_coord.y, color );
+			}
 		}
 		
 	}
@@ -291,8 +279,11 @@ void image_editor_widget::draw_line( const sf::Vector2i& pos_0,
 			
 			pixel_coord.y += offset.y;
 			
-			canvas_widget->image.setPixel( (u32)pixel_coord.x, 
-				(u32)pixel_coord.y, color );
+			if ( point_is_in_image(pixel_coord) )
+			{
+				canvas_widget->image.setPixel( (u32)pixel_coord.x, 
+					(u32)pixel_coord.y, color );
+			}
 		}
 		
 	}

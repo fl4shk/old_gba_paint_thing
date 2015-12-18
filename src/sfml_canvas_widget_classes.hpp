@@ -26,6 +26,7 @@ protected:		// functions
 	virtual void paintEvent( QPaintEvent* event );
 };
 
+class palette_chooser_widget;
 
 class sfml_canvas_widget : public sfml_canvas_widget_base
 {
@@ -78,6 +79,7 @@ protected:		// functions
 	
 };
 
+#include "palette_chooser_widget_class.hpp"
 
 
 #endif		// sfml_canvas_widget_classes_hpp

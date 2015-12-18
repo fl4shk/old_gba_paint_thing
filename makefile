@@ -14,9 +14,9 @@ DEFINES=-DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 BASE_FLAGS=-Wall -O3 -march=native $(DEFINES)
 #BASE_FLAGS=-Wall -g -march=native $(DEFINES)
 
-CXX_FLAGS=-std=c++14 -I/usr/include $(BASE_FLAGS) `pkg-config --cflags Qt5Core Qt5Gui Qt5Widgets sfml-graphics` -fPIC
+CXX_FLAGS=-std=c++14 -I/usr/include $(BASE_FLAGS) `pkg-config --cflags Qt5Core Qt5Gui Qt5Widgets sfml-graphics libpng` -fPIC
 S_FLAGS=
-LD_FLAGS=-lm `pkg-config --libs Qt5Core Qt5Gui Qt5Widgets sfml-graphics` 
+LD_FLAGS=-lm `pkg-config --libs Qt5Core Qt5Gui Qt5Widgets sfml-graphics libpng`
 
 OBJDIR=objs
 DEPDIR=deps
@@ -66,7 +66,7 @@ $(CXX_OFILES) : $(OBJDIR)/%.o : %.cpp
 -include $(PFILES)
 
 $(CXX_MOC_SOURCES) : $(MOC_SOURCE_DIR)/%.moc.cpp : %.hpp
-	moc-qt5 $(DEFINES) $< -o $@
+	@moc-qt5 $(DEFINES) $< -o $@
 
 $(CXX_MOC_OFILES) : $(OBJDIR)/%.moc.o : $(MOC_SOURCE_DIR)/%.moc.cpp
 	$(CXX) $(CXX_FLAGS) -c $< -o $@

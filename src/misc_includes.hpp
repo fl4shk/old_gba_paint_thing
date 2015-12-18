@@ -3,8 +3,11 @@
 
 #include <iostream>
 #include <vector>
+#include <array>
+#include <fstream>
 using namespace std;
 
+// Qt Stuff
 #include <QApplication>
 #include <QWidget>
 #include <QIcon>
@@ -52,10 +55,13 @@ using namespace std;
 #include <QButtonGroup>
 
 
-
+// SFML Stuff
 #include <SFML/Graphics.hpp>
 
+// png++ Stuff
+#include <png++/png.hpp>
 
+// Custom Stuff
 #include "misc_types.hpp"
 
 

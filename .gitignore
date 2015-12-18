@@ -6,3 +6,5 @@ moc_sources/*
 gba_paint_thing
 src/tags
 src/types_c.taghl
+pngpp_test
+pngpp_test/*
