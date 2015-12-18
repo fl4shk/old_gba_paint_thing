@@ -37,30 +37,19 @@ public:		// functions
 	
 protected:		// functions
 	void generate_menus();
-	void generate_toolbar();
+	bool generate_toolbar();
 	void generate_central_widget();
 	
-	inline void keyPressEvent( QKeyEvent* event )
-	{
-		if ( event->key() == Qt::Key_Escape )
-		{
-			quit_non_slot();
-		}
-	}
+	//inline void keyPressEvent( QKeyEvent* event )
+	//{
+	//	if ( event->key() == Qt::Key_Escape )
+	//	{
+	//		quit_non_slot();
+	//	}
+	//}
 	inline void closeEvent( QCloseEvent* event )
 	{
 		show_quit_message();
-	}
-	
-	inline void show_quit_message()
-	{
-		cout << "Exiting....\n";
-	}
-	
-	inline void quit_non_slot()
-	{
-		show_quit_message();
-		qApp->quit();
 	}
 	
 	//inline void mouseMoveEvent( QMouseEvent* event )

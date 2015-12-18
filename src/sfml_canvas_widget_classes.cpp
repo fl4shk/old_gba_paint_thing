@@ -14,7 +14,8 @@ sfml_canvas_widget_base::sfml_canvas_widget_base( QWidget* s_parent,
 	setAttribute(Qt::WA_OpaquePaintEvent);
 	setAttribute(Qt::WA_NoSystemBackground);
 	
-	// Set strong focus to enable keyboard events to be received.
+	// Set strong focus to enable keyboard events (and maybe mouse events?)
+	// to be received.
 	setFocusPolicy(Qt::StrongFocus);
 	
 	// Set up the widget geometry.
@@ -72,7 +73,7 @@ void sfml_canvas_widget_base::paintEvent( QPaintEvent* event )
 	// Let the derived class do its specific stuff.
 	on_update();
 	
-	// Display on screen
+	// Display on screen.
 	display();
 }
 
@@ -92,15 +93,15 @@ sfml_canvas_widget::sfml_canvas_widget( QWidget* s_parent,
 
 bool sfml_canvas_widget::open_image()
 {
-	if ( !image.loadFromFile(image_file_name) )
+	if ( !canvas_image.loadFromFile(image_file_name) )
 	{
 		return false;
 	}
 	
-	texture.loadFromImage(image);
-	sprite.setTexture(texture);
-	full_resize(QSize( sprite.getTexture()->getSize().x,
-		sprite.getTexture()->getSize().y ));
+	canvas_texture.loadFromImage(canvas_image);
+	canvas_sprite.setTexture(canvas_texture);
+	full_resize(QSize( canvas_image.getSize().x, 
+		canvas_image.getSize().y ));
 	
 	return true;
 }
@@ -111,16 +112,15 @@ const sf::View& sfml_canvas_widget::get_apparent_view()
 	
 	apparent_view.setCenter( view_center_x, view_center_y );
 	
-	apparent_view.move
-		( (double)( sprite.getTexture()->getSize().x ) / (double)2.0f,
-		(double)( sprite.getTexture()->getSize().y ) / (double)2.0f );
+	apparent_view.move( (double)( canvas_image.getSize().x ) 
+		/ (double)2.0f, (double)( canvas_image.getSize().y )
+		/ (double)2.0f );
 		
 	apparent_view.zoom( 1.0f / (double)scale_factor );
 	
 	return apparent_view;
 }
 
-// This is a purely integer-based line drawing algorithm.
 void sfml_canvas_widget::draw_line( const sf::Vector2i& pos_0, 
 	const sf::Vector2i& pos_1, const sf::Color& color )
 {
@@ -161,8 +161,8 @@ void sfml_canvas_widget::draw_line( const sf::Vector2i& pos_0,
 	
 	if ( point_is_in_image(pixel_coord) )
 	{
-		image.setPixel( (u32)pixel_coord.x, 
-			(u32)pixel_coord.y, color );
+		canvas_image.setPixel( (u32)pixel_coord.x, (u32)pixel_coord.y, 
+			color );
 	}
 	
 	if ( delta.x > delta.y )
@@ -183,7 +183,7 @@ void sfml_canvas_widget::draw_line( const sf::Vector2i& pos_0,
 			
 			if ( point_is_in_image(pixel_coord) )
 			{
-				image.setPixel( (u32)pixel_coord.x, 
+				canvas_image.setPixel( (u32)pixel_coord.x, 
 					(u32)pixel_coord.y, color );
 			}
 		}
@@ -206,7 +206,7 @@ void sfml_canvas_widget::draw_line( const sf::Vector2i& pos_0,
 			
 			if ( point_is_in_image(pixel_coord) )
 			{
-				image.setPixel( (u32)pixel_coord.x, 
+				canvas_image.setPixel( (u32)pixel_coord.x, 
 					(u32)pixel_coord.y, color );
 			}
 		}
@@ -214,27 +214,90 @@ void sfml_canvas_widget::draw_line( const sf::Vector2i& pos_0,
 	
 }
 
+void sfml_canvas_widget::mousePressEvent( QMouseEvent* event )
+{
+	// This converts the clicked coordinate to pixel coordinates.
+	sf::Vector2f event_pos_in_image_coords = mapPixelToCoords
+		( sf::Vector2i( event->x(), event->y() ), get_apparent_view() );
+	
+	sf::Vector2i event_pos_in_image_pixel_coords
+		= sf::Vector2i( (int)event_pos_in_image_coords.x,
+		(int)event_pos_in_image_coords.y );
+	
+	prev_mouse_pos = event->pos();
+	
+	// Check whether the mouse was clicked somewhere inside the image.
+	if ( !point_is_in_image(event_pos_in_image_pixel_coords) )
+	{
+		return;
+	}
+	
+	modified_recently = true;
+	canvas_image.setPixel( (u32)event_pos_in_image_pixel_coords.x,
+		(u32)event_pos_in_image_pixel_coords.y, sf::Color( 0, 0, 0 ) );
+	
+}
+
+void sfml_canvas_widget::mouseMoveEvent( QMouseEvent* event )
+{
+	// This converts the clicked coordinate to pixel coordinates.
+	sf::Vector2f event_pos_in_image_coords = mapPixelToCoords
+		( sf::Vector2i( event->x(), event->y() ), get_apparent_view() );
+	
+	sf::Vector2i event_pos_in_image_pixel_coords
+		= sf::Vector2i( (int)event_pos_in_image_coords.x,
+		(int)event_pos_in_image_coords.y );
+	
+	// Check whether the mouse was moved to somewhere inside the image.
+	if ( !point_is_in_image(event_pos_in_image_pixel_coords) )
+	{
+		prev_mouse_pos = event->pos();
+		return;
+	}
+	
+	sf::Vector2f prev_mouse_pos_in_image_coords = mapPixelToCoords
+		( sf::Vector2i( prev_mouse_pos.x(), prev_mouse_pos.y() ), 
+		get_apparent_view() );
+	
+	sf::Vector2i prev_mouse_pos_in_image_pixel_coords
+		= sf::Vector2i( (int)prev_mouse_pos_in_image_coords.x,
+		(int)prev_mouse_pos_in_image_coords.y );
+	
+	
+	prev_mouse_pos = event->pos();
+	
+	//modified_recently = true;
+	draw_line( prev_mouse_pos_in_image_pixel_coords,
+		event_pos_in_image_pixel_coords, sf::Color::Black );
+	
+}
+
+//void sfml_canvas_widget::mouseReleaseEvent( QMouseEvent* event )
+//{
+//	//cout << event->x() << ", " << event->y() << endl;
+//}
+
 
 void sfml_canvas_widget::on_update()
 {
 	if ( zoomed_recently )
 	{
 		zoomed_recently = false;
-		full_resize(QSize( sprite.getTexture()->getSize().x * scale_factor,
-			sprite.getTexture()->getSize().y * scale_factor ));
+		full_resize(QSize( canvas_image.getSize().x * scale_factor, 
+			canvas_image.getSize().y * scale_factor ));
 		
-		sprite.setScale( scale_factor, scale_factor );
+		canvas_sprite.setScale( scale_factor, scale_factor );
 	}
 	if ( modified_recently )
 	{
 		modified_recently = false;
-		texture.loadFromImage(image);
+		canvas_texture.loadFromImage(canvas_image);
 	}
 	
 	//clear(sf::Color( 0, 128, 0 ));
 	// This clear() call is probably not necessary.
 	clear(sf::Color::White);
-	draw(sprite);
+	draw(canvas_sprite);
 }
 
 

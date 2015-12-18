@@ -2,30 +2,23 @@
 #include "sfml_color_comparison_stuff.hpp"
 
 palette_chooser_widget::palette_chooser_widget
-	( QWidget* s_parent, const QPoint& s_position, const QSize& s_size, 
-	sf::Image* s_canvas_widget_image ) 
+	( QWidget* s_parent, const QPoint& s_position, const QSize& s_size ) 
 	: sfml_canvas_widget_base( s_parent, s_position, s_size ),
-	canvas_widget_image(s_canvas_widget_image), current_color_index(0),
-	palette_modified_recently(false)
+	current_color_index(0), palette_modified_recently(false)
 {
 	
-	//
-	for ( u32 i=0; i<num_colors_per_palette; ++i )
-	{
-		palette_image_arr[i].create( 1, 1 );
-		
-	}
+	palette_image.create( num_colors_per_row * palette_slot_outer_width, 
+		num_colors_per_column * palette_slot_outer_height, 
+		sf::Color::Blue );
+	palette_texture.loadFromImage(palette_image);
+	palette_sprite.setTexture(palette_texture);
 	
-	//grab_palette_from_canvas_widget_image();
-	
-	for ( u32 i=0; i<num_colors_per_palette; ++i )
-	{
-		palette_texture_arr[i].loadFromImage(palette_image_arr[i]);
-		
-		palette_sprite_arr[i].setTexture(palette_texture_arr[i]);
-		palette_sprite_arr[i].setScale( palette_sprite_scale,
-			palette_sprite_scale );
-	}
+	full_resize( QSize( palette_image.getSize().x, 
+		palette_image.getSize().y ) );
+	set_min_max_sizes( QSize( palette_image.getSize().x,
+		palette_image.getSize().y ) );
+	//cout << palette_image.getSize().x << ", " << palette_image.getSize().y
+	//	<< endl;
 	
 }
 
@@ -99,11 +92,11 @@ void palette_chooser_widget::on_update()
 	{
 		palette_modified_recently = false;
 		
-		for ( u32 i=0; i<num_colors_per_palette; ++i )
-		{
-			palette_texture_arr[i].loadFromImage(palette_image_arr[i]);
-		}
+		palette_texture.loadFromImage(palette_image);
 	}
+	
+	clear(sf::Color::White);
+	draw(palette_sprite);
 }
 
 

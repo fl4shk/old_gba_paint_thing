@@ -9,24 +9,26 @@ class image_editor_widget : public QWidget
 	Q_OBJECT
 	
 public:		// variables
+	vector<string>* argv_copy;
+	
 	static const QString default_parent_title;
 	
-	QHBoxLayout* hbox_layout;
-	QVBoxLayout* vbox_layout;
 	QWidget* parent;
+	
+	QHBoxLayout* hbox_layout;
+	//QVBoxLayout* vbox_layout;
+	
 	QScrollArea* scroll_area;
 	
-	sfml_canvas_widget* canvas_widget; 
+	sfml_canvas_widget* the_sfml_canvas_widget; 
+	palette_chooser_widget* the_palette_chooser_widget;
 	
-	//bool modified;
-	//u32 scale_factor;
 	
-	QPoint prev_mouse_pos;
 	
 public:		// functions
-	image_editor_widget( QWidget* s_parent = 0 );
+	image_editor_widget( vector<string>* s_argv_copy, 
+		QWidget* s_parent = 0 );
 	
-	bool open_image( const std::string& s_image_file_name );
 	
 protected:		// functions
 	//void adjust_scroll_bar( QScrollBar* scroll_bar );
@@ -35,20 +37,20 @@ protected:		// functions
 	
 	// Events
 	void keyPressEvent( QKeyEvent* event );
-	void mousePressEvent( QMouseEvent* event );
-	void mouseMoveEvent( QMouseEvent* event );
+	//void mousePressEvent( QMouseEvent* event );
+	//void mouseMoveEvent( QMouseEvent* event );
 	////void mouseReleaseEvent( QMouseEvent* event );
 	//void paintEvent( QPaintEvent* event );
 	////void resizeEvent( QResizeEvent* event );
 	
-	inline const sf::Vector2i widget_pos_to_scroll_area_coords
-		( int widget_x, int widget_y ) const
-	{
-		return sf::Vector2i( widget_x - scroll_area->geometry().x()
-			+ scroll_area->horizontalScrollBar()->value(),
-			widget_y - scroll_area->geometry().y()
-			+ scroll_area->verticalScrollBar()->value() );
-	}
+	//inline const sf::Vector2i widget_pos_to_scroll_area_coords
+	//	( int widget_x, int widget_y ) const
+	//{
+	//	return sf::Vector2i( widget_x - scroll_area->geometry().x()
+	//		+ scroll_area->horizontalScrollBar()->value(),
+	//		widget_y - scroll_area->geometry().y()
+	//		+ scroll_area->verticalScrollBar()->value() );
+	//}
 	
 	
 protected slots:		// slots.

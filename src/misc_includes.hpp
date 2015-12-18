@@ -65,6 +65,7 @@ using namespace std;
 
 // Custom Stuff
 #include "misc_types.hpp"
+#include "misc_funcs.hpp"
 
 
 #endif		// misc_includes_hpp

@@ -5,25 +5,35 @@
 
 class palette_chooser_widget : public sfml_canvas_widget_base
 {
+protected:		// variables
+	sfml_canvas_widget* the_sfml_canvas_widget;
+	
 public:		// variables
-	sf::Image* canvas_widget_image;
+	static constexpr u32 num_colors_per_palette = 256,
+		palette_slot_inner_width = 7, palette_slot_inner_height = 7, 
+		palette_slot_outer_width = palette_slot_inner_width + 2, 
+		palette_slot_outer_height = palette_slot_inner_height + 2,
+		num_colors_per_row = 16, num_colors_per_column = 16;
 	
 	u32 current_color_index;
 	bool palette_modified_recently;
 	
-	static constexpr u32 num_colors_per_palette = 256;
-	static constexpr u32 palette_sprite_scale = 5;
-	array< sf::Image, num_colors_per_palette > palette_image_arr;
-	array< sf::Texture, num_colors_per_palette > palette_texture_arr;
-	array< sf::Sprite, num_colors_per_palette > palette_sprite_arr;
+	sf::Image palette_image;
+	sf::Texture palette_texture;
+	sf::Sprite palette_sprite;
 	
 	
 public:		// functions
-	palette_chooser_widget( QWidget* s_parent, 
-		const QPoint& s_position, const QSize& s_size, 
-		sf::Image* s_canvas_widget_image );
+	palette_chooser_widget( QWidget* s_parent, const QPoint& s_position, 
+		const QSize& s_size );
 	
 	//bool grab_palette_from_canvas_widget_image();
+	
+	inline void set_the_sfml_canvas_widget
+		( sfml_canvas_widget* n_the_sfml_canvas_widget )
+	{
+		the_sfml_canvas_widget = n_the_sfml_canvas_widget;
+	}
 	
 protected:		// functions
 	

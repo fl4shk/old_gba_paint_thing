@@ -10,7 +10,12 @@ primary_widget::primary_widget( vector<string>& s_argv_copy,
 	QWidget* parent ) : QMainWindow(parent), argv_copy(s_argv_copy)
 {
 	generate_menus();
-	generate_toolbar();
+	
+	if ( !generate_toolbar() )
+	{
+		quit_non_slot();
+	}
+	
 	generate_central_widget();
 	
 	//if ( !the_central_widget->open_image
@@ -19,6 +24,8 @@ primary_widget::primary_widget( vector<string>& s_argv_copy,
 	//	cout << "Error opening background_tiles_modded.png!\n";
 	//	quit_non_slot();
 	//}
+	
+	//quit_non_slot();
 }
 
 void primary_widget::generate_menus()
@@ -40,16 +47,8 @@ void primary_widget::generate_menus()
 	second_menu->addAction(menu_quit_action);
 }
 
-void primary_widget::generate_toolbar()
+bool primary_widget::generate_toolbar()
 {
-	//laugh_button = new QPushButton( "Laugh", this );
-	//quit_button = new QPushButton( "Quit", this );
-	//
-	//connect( laugh_button, &QPushButton::clicked, this, 
-	//	&primary_widget::laugh );
-	//connect( quit_button, &QPushButton::clicked, this, 
-	//	&primary_widget::quit );
-	
 	QPixmap laugh_pixmap(laugh_icon_file_name), 
 		quit_pixmap(quit_icon_file_name);
 	
@@ -57,14 +56,14 @@ void primary_widget::generate_toolbar()
 	{
 		cout << "Unable to open " << laugh_icon_file_name.toStdString()
 			<< " for reading!  ";
-		quit_non_slot();
+		return false;
 	}
 	
 	if ( quit_pixmap.isNull() )
 	{
 		cout << "Unable to open " << quit_icon_file_name.toStdString()
 			<< " for reading!  ";
-		quit_non_slot();
+		return false;
 	}
 	
 	toolbar = addToolBar("main toolbar");
@@ -78,23 +77,12 @@ void primary_widget::generate_toolbar()
 	connect( toolbar_quit_action, &QAction::triggered, this,
 		&primary_widget::quit );
 	
+	return true;
 }
 
 void primary_widget::generate_central_widget()
 {
-	//the_grid_widget = new grid_widget(this);
-	//the_grid_widget->layout->setSpacing(1);
-	//the_grid_widget->layout
-	//
-	//QPushButton* button_1 = new QPushButton( "Button 1", this );
-	//the_grid_widget->layout->addWidget( button_1, 2, 1, 1, 1 );
-	//
-	//QPushButton* button_2 = new QPushButton( "Button 2", this );
-	//the_grid_widget->layout->addWidget( button_2, 2, 2, 1, 1 );
-	//
-	//setCentralWidget(the_grid_widget);
-	
-	the_central_widget = new image_editor_widget(this);
+	the_central_widget = new image_editor_widget( &argv_copy, this );
 	
 	setCentralWidget(the_central_widget);
 }
@@ -108,5 +96,4 @@ void primary_widget::quit()
 {
 	quit_non_slot();
 }
-
 
