@@ -12,7 +12,7 @@ public:		// variables
 	
 public:		// functions
 	sfml_canvas_widget_base( QWidget* s_parent, const QPoint& s_position,
-		const QSize& s_size, u32 frame_time = 0 );
+		const QSize& s_size, u32 frame_time = 17 );
 	virtual ~sfml_canvas_widget_base();
 	
 	
@@ -21,6 +21,7 @@ protected:		// functions
 	{
 		resize(n_size);
 		sf::RenderWindow::create(winId());
+		setVerticalSyncEnabled(true);
 	}
 	inline void set_min_max_sizes( const QSize& n_size )
 	{
