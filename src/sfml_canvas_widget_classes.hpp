@@ -12,7 +12,14 @@ public:		// variables
 	
 public:		// functions
 	sfml_canvas_widget_base( QWidget* s_parent, const QPoint& s_position,
-		const QSize& s_size, u32 frame_time = 17 );
+	//// Regarding the number 17 used for the default frame_time parameter:
+	//// To make this widget update at a 60 Hz refresh rate, get the inverse
+	//// of the refresh rate.  ( 1 / ( 60 Hz) ) = 0.016666... seconds, or
+	//// about 17 milliseconds.  The frame_time parameter is an INTEGER
+	//// parameter specifying the number of milliseconds to wait for.
+	//// However, as expected, the milliseconds parameter probably doesn't
+	//// have a whole lot of precision anyway.
+		const QSize& s_size, u32 frame_time = 2 );
 	virtual ~sfml_canvas_widget_base();
 	
 	
@@ -21,7 +28,7 @@ protected:		// functions
 	{
 		resize(n_size);
 		sf::RenderWindow::create(winId());
-		setVerticalSyncEnabled(true);
+		//setVerticalSyncEnabled(true);
 	}
 	inline void set_min_max_sizes( const QSize& n_size )
 	{
@@ -48,24 +55,29 @@ protected:		// variables
 	
 	palette_chooser_widget* the_palette_chooser_widget;
 	
-public:		// variables
-	std::string image_file_name;
+	string image_file_name;
+	
+	
+	
 	sf::Image canvas_image;
 	sf::Texture canvas_texture;
 	sf::Sprite canvas_sprite;
+	
+	// This is for line drawing.
+	QPoint prev_mouse_pos;
+	
+public:		// variables
 	
 	//bool zoomed_in_recently, zoomed_out_recently;
 	bool modified_recently, zoomed_recently;
 	u32 scale_factor;
 	float view_center_x, view_center_y;
 	
-	// This is for line drawing.
-	QPoint prev_mouse_pos;
 	
 	
 public:		// functions
 	sfml_canvas_widget( QWidget* s_parent, const QPoint& s_position,
-		const QSize& s_size, const std::string& s_image_file_name );
+		const QSize& s_size, const string& s_image_file_name );
 	
 	inline void set_the_palette_chooser_widget
 		( palette_chooser_widget* n_the_palette_chooser_widget );
@@ -78,7 +90,7 @@ public:		// functions
 	
 	bool open_image();
 	
-	inline bool open_image( const std::string& n_image_file_name )
+	inline bool open_image( const string& n_image_file_name )
 	{
 		image_file_name = n_image_file_name;
 		return open_image();
@@ -113,6 +125,7 @@ protected:		// functions
 	}
 	void on_update();
 	
+	friend class palette_chooser_widget;
 };
 
 #include "palette_chooser_widget_class.hpp"

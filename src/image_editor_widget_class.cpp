@@ -31,12 +31,13 @@ image_editor_widget::image_editor_widget( vector<string>* s_argv_copy,
 		quit_non_slot();
 	}
 	
+	// scroll_area stuff
 	scroll_area = new QScrollArea(this);
 	scroll_area->setWidget(the_sfml_canvas_widget);
 	scroll_area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	scroll_area->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	
-	
+	// hbox_layout stuff
 	hbox_layout = new QHBoxLayout(this);
 	hbox_layout->addWidget(scroll_area);
 	hbox_layout->addWidget(the_palette_chooser_widget);
@@ -87,7 +88,7 @@ image_editor_widget::image_editor_widget( vector<string>* s_argv_copy,
 
 bool image_editor_widget::zoom_in()
 {
-	if ( the_sfml_canvas_widget->scale_factor == 64 )
+	if ( the_sfml_canvas_widget->scale_factor == 16 )
 	{
 		return false;
 	}

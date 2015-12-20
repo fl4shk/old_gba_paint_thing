@@ -80,11 +80,11 @@ void sfml_canvas_widget_base::paintEvent( QPaintEvent* event )
 
 sfml_canvas_widget::sfml_canvas_widget( QWidget* s_parent, 
 	const QPoint& s_position, const QSize& s_size, 
-	const std::string& s_image_file_name ) 
+	const string& s_image_file_name ) 
 	: sfml_canvas_widget_base( s_parent, s_position, s_size ),
-	image_file_name(s_image_file_name), modified_recently(false), 
-	zoomed_recently(false), scale_factor(1), view_center_x(0.0f),
-	view_center_y(0.0f)
+	the_palette_chooser_widget(NULL),  image_file_name(s_image_file_name), 
+	modified_recently(false), zoomed_recently(false), scale_factor(1), 
+	view_center_x(0.0f), view_center_y(0.0f)
 {
 	apparent_view = getDefaultView();
 }
@@ -93,15 +93,66 @@ sfml_canvas_widget::sfml_canvas_widget( QWidget* s_parent,
 
 bool sfml_canvas_widget::open_image()
 {
-	if ( !canvas_image.loadFromFile(image_file_name) )
+	if ( the_palette_chooser_widget == NULL )
 	{
+		cout << "Bug caused by the programmer:  "
+			<< "the_palette_chooser_widget == NULL\n";
 		return false;
 	}
 	
+	fstream image_file( image_file_name, ios_base::in | ios_base::binary );
+	
+	if ( !image_file.is_open() )
+	{
+		cout << "Unable to open " << image_file_name << " for reading.\n";
+		return false;
+	}
+	
+	png::reader<fstream> the_reader(image_file);
+	
+	try
+	{
+		the_reader.read_info();
+	}
+	catch ( std::exception const& error )
+	{
+		cout << "The file called " << image_file_name << " doesn't appear "
+			<< "to be a PNG file!\n";
+		cout << error.what() << endl;
+		return false;
+	}
+	
+	if ( !canvas_image.loadFromFile(image_file_name) )
+	{
+		cout << "Unable to open " << image_file_name << " for reading.\n";
+		return false;
+	}
 	canvas_texture.loadFromImage(canvas_image);
 	canvas_sprite.setTexture(canvas_texture);
 	full_resize(QSize( canvas_image.getSize().x, 
 		canvas_image.getSize().y ));
+	
+	// Palette stuff
+	if ( the_reader.get_color_type() == png::color_type_palette )
+	{
+		cout << "Paletted image!\n";
+		
+		png::image<png::index_pixel> index_pixel_image(image_file_name);
+		the_palette_chooser_widget->extract_palette_from_paletted_image
+			(index_pixel_image);
+	}
+	else
+	{
+		cout << "Un-paletted image!\n";
+		
+		if ( !the_palette_chooser_widget->extract_palette_from_sfml_image
+			(canvas_image) )
+		{
+			return false;
+		}
+		
+	}
+	
 	
 	return true;
 }
