@@ -18,13 +18,13 @@ image_editor_widget::image_editor_widget( vector<string>* s_argv_copy,
 	//	QSize( 200, 200 ), string("the_powerup_gfx.png") );
 	the_sfml_canvas_widget = new sfml_canvas_widget( this, QPoint( 0, 0 ),
 		QSize( 200, 200 ), argv_copy->at(1) );
-	the_palette_chooser_widget = new palette_chooser_widget( this, 
-		QPoint( 0, 0 ), QSize( 200, 200 ) );
+	the_palette_manipulator_widget = new palette_manipulator_widget( this, 
+		QPoint( 0, 0 ), QSize( 300, 300 ) );
 	
-	the_sfml_canvas_widget->set_the_palette_chooser_widget
-		(the_palette_chooser_widget);
-	the_palette_chooser_widget->set_the_sfml_canvas_widget
-		(the_sfml_canvas_widget);
+	the_sfml_canvas_widget->set_the_palette_manipulator_core_widget
+		(the_palette_manipulator_widget->the_core_widget);
+	the_palette_manipulator_widget->the_core_widget
+		->set_the_sfml_canvas_widget(the_sfml_canvas_widget);
 	
 	if ( !the_sfml_canvas_widget->open_image() )
 	{
@@ -40,13 +40,13 @@ image_editor_widget::image_editor_widget( vector<string>* s_argv_copy,
 	// hbox_layout stuff
 	hbox_layout = new QHBoxLayout(this);
 	hbox_layout->addWidget(scroll_area);
-	hbox_layout->addWidget(the_palette_chooser_widget);
+	hbox_layout->addWidget(the_palette_manipulator_widget);
 	
 	//setLayout(hbox_layout);
 	
 	
 	////vbox_layout = new QVBoxLayout(this);
-	////vbox_layout->addWidget(the_palette_chooser_widget);
+	////vbox_layout->addWidget(the_palette_manipulator_widget);
 	////vbox_layout->setGeometry( QRect( QPoint( 0, 0 ), QSize( 200, 200 ) ) );
 	////hbox_layout->addLayout(vbox_layout);
 	//

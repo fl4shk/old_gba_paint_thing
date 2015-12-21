@@ -37,7 +37,7 @@ protected:		// functions
 	virtual void paintEvent( QPaintEvent* event );
 };
 
-class palette_chooser_widget;
+class palette_manipulator_core_widget;
 
 class sfml_canvas_widget : public sfml_canvas_widget_base
 {
@@ -46,7 +46,7 @@ protected:		// variables
 	// to coordinates relative to the image.
 	sf::View apparent_view;
 	
-	palette_chooser_widget* the_palette_chooser_widget;
+	palette_manipulator_core_widget* the_palette_manipulator_core_widget;
 	
 	string image_file_name;
 	
@@ -79,8 +79,9 @@ public:		// functions
 	sfml_canvas_widget( QWidget* s_parent, const QPoint& s_position,
 		const QSize& s_size, const string& s_image_file_name );
 	
-	inline void set_the_palette_chooser_widget
-		( palette_chooser_widget* n_the_palette_chooser_widget );
+	inline void set_the_palette_manipulator_core_widget
+		( palette_manipulator_core_widget* 
+		n_the_palette_manipulator_core_widget );
 	
 	//inline void full_resize( const QSize& n_size )
 	//{
@@ -142,15 +143,17 @@ protected:		// functions
 	void on_update();
 	
 	
-	friend class palette_chooser_widget;
+	friend class palette_manipulator_core_widget;
 };
 
-#include "palette_chooser_widget_class.hpp"
+#include "palette_manipulator_core_widget_class.hpp"
 
-inline void sfml_canvas_widget::set_the_palette_chooser_widget
-	( palette_chooser_widget* n_the_palette_chooser_widget )
+inline void sfml_canvas_widget::set_the_palette_manipulator_core_widget
+	( palette_manipulator_core_widget* 
+	n_the_palette_manipulator_core_widget )
 {
-	the_palette_chooser_widget = n_the_palette_chooser_widget;
+	the_palette_manipulator_core_widget 
+		= n_the_palette_manipulator_core_widget;
 }
 
 #endif		// sfml_canvas_widget_classes_hpp

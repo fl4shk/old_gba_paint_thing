@@ -82,8 +82,8 @@ sfml_canvas_widget::sfml_canvas_widget( QWidget* s_parent,
 	const QPoint& s_position, const QSize& s_size, 
 	const string& s_image_file_name ) 
 	: sfml_canvas_widget_base( s_parent, s_position, s_size ),
-	the_palette_chooser_widget(NULL),  image_file_name(s_image_file_name), 
-	pixel_grid_enabled_recently(false),
+	the_palette_manipulator_core_widget(NULL), 
+	image_file_name(s_image_file_name), pixel_grid_enabled_recently(false),
 	pixel_grid_disabled_recently(false), pixel_grid_enabled(false),
 	modified_recently(false), zoomed_recently(false), scale_factor(1), 
 	view_center_x(0.0f), view_center_y(0.0f)
@@ -95,10 +95,10 @@ sfml_canvas_widget::sfml_canvas_widget( QWidget* s_parent,
 
 bool sfml_canvas_widget::open_image()
 {
-	if ( the_palette_chooser_widget == NULL )
+	if ( the_palette_manipulator_core_widget == NULL )
 	{
 		cout << "Bug caused by the programmer:  "
-			<< "the_palette_chooser_widget == NULL\n";
+			<< "the_palette_manipulator_core_widget == NULL\n";
 		return false;
 	}
 	
@@ -140,15 +140,15 @@ bool sfml_canvas_widget::open_image()
 		cout << "Paletted image!\n";
 		
 		png::image<png::index_pixel> index_pixel_image(image_file_name);
-		the_palette_chooser_widget->extract_palette_from_paletted_image
-			(index_pixel_image);
+		the_palette_manipulator_core_widget
+			->extract_palette_from_paletted_image(index_pixel_image);
 	}
 	else
 	{
 		cout << "Un-paletted image!\n";
 		
-		if ( !the_palette_chooser_widget->extract_palette_from_sfml_image
-			(canvas_image) )
+		if ( !the_palette_manipulator_core_widget
+			->extract_palette_from_sfml_image(canvas_image) )
 		{
 			return false;
 		}
@@ -339,8 +339,8 @@ void sfml_canvas_widget::mouseMoveEvent( QMouseEvent* event )
 	//	event_pos_in_image_pixel_coords, sf::Color::Black );
 	draw_line( prev_mouse_pos_in_image_pixel_coords,
 		event_pos_in_image_pixel_coords, 
-		the_palette_chooser_widget->palette.at
-		(the_palette_chooser_widget->current_color_index) );
+		the_palette_manipulator_core_widget->palette.at
+		(the_palette_manipulator_core_widget->current_color_index) );
 	
 }
 
@@ -357,7 +357,7 @@ void sfml_canvas_widget::export_file_as( const string& output_file_name )
 	index_pixel_image.resize( canvas_image.getSize().x,
 		canvas_image.getSize().y );
 	
-	const auto& palette = the_palette_chooser_widget->palette;
+	const auto& palette = the_palette_manipulator_core_widget->palette;
 	
 	for ( const sf::Color& the_sfml_color : palette )
 	{

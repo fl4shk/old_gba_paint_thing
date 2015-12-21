@@ -3,6 +3,7 @@
 
 #include "misc_includes.hpp"
 #include "sfml_canvas_widget_classes.hpp"
+#include "palette_manipulator_widget_class.hpp"
 
 class image_editor_widget : public QWidget
 {
@@ -21,7 +22,7 @@ public:		// variables
 	QScrollArea* scroll_area;
 	
 	sfml_canvas_widget* the_sfml_canvas_widget; 
-	palette_chooser_widget* the_palette_chooser_widget;
+	palette_manipulator_widget* the_palette_manipulator_widget;
 	
 	
 	
