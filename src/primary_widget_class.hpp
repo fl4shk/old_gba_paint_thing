@@ -17,7 +17,8 @@ protected:		// variables
 	// Menu Stuff
 	QMenu* file_menu, * second_menu;
 	
-	QAction* menu_laugh_action, * menu_quit_action;
+	QAction* menu_laugh_action, * menu_save_action, * menu_save_as_action, 
+		* menu_quit_action;
 	
 	// Toolbar Stuff
 	static const QString laugh_icon_file_name, quit_icon_file_name;

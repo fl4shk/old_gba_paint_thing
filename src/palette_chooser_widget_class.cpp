@@ -1,5 +1,4 @@
 #include "palette_chooser_widget_class.hpp"
-#include "sfml_color_comparison_stuff.hpp"
 
 palette_chooser_widget::palette_chooser_widget
 	( QWidget* s_parent, const QPoint& s_position, const QSize& s_size ) 
@@ -52,9 +51,7 @@ void palette_chooser_widget::extract_palette_from_paletted_image
 	
 	for ( u32 i=0; i<index_pixel_image_palette.size(); ++i )
 	{
-		palette[i].r = index_pixel_image_palette[i].red;
-		palette[i].g = index_pixel_image_palette[i].green;
-		palette[i].b = index_pixel_image_palette[i].blue;
+		palette[i] = png_color_to_sfml_color(index_pixel_image_palette[i]);
 	}
 	
 }
@@ -111,8 +108,8 @@ void palette_chooser_widget::generate_palette_render_texture()
 	//palette_slot_inner_sprite.setPosition( 0, 0 );
 	//palette_slot_outer_sprite.setPosition( 0, 0 );
 	
-	cout << palette_render_texture.getSize().x << ", " 
-		<< palette_render_texture.getSize().y << endl;
+	//cout << palette_render_texture.getSize().x << ", " 
+	//	<< palette_render_texture.getSize().y << endl;
 	
 	for ( u32 j=0; j<num_colors_per_column; ++j )
 	{

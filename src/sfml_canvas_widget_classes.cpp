@@ -83,6 +83,8 @@ sfml_canvas_widget::sfml_canvas_widget( QWidget* s_parent,
 	const string& s_image_file_name ) 
 	: sfml_canvas_widget_base( s_parent, s_position, s_size ),
 	the_palette_chooser_widget(NULL),  image_file_name(s_image_file_name), 
+	pixel_grid_enabled_recently(false),
+	pixel_grid_disabled_recently(false), pixel_grid_enabled(false),
 	modified_recently(false), zoomed_recently(false), scale_factor(1), 
 	view_center_x(0.0f), view_center_y(0.0f)
 {
@@ -265,6 +267,21 @@ void sfml_canvas_widget::draw_line( const sf::Vector2i& pos_0,
 	
 }
 
+void sfml_canvas_widget::enable_pixel_grid()
+{
+	pixel_grid_enabled_recently = true;
+	pixel_grid_disabled_recently = false;
+	pixel_grid_enabled = true;
+	
+}
+
+void sfml_canvas_widget::disable_pixel_grid()
+{
+	pixel_grid_enabled_recently = false;
+	pixel_grid_disabled_recently = true;
+	pixel_grid_enabled = false;
+}
+
 void sfml_canvas_widget::mousePressEvent( QMouseEvent* event )
 {
 	// This converts the clicked coordinate to pixel coordinates.
@@ -318,8 +335,12 @@ void sfml_canvas_widget::mouseMoveEvent( QMouseEvent* event )
 	prev_mouse_pos = event->pos();
 	
 	//modified_recently = true;
+	//draw_line( prev_mouse_pos_in_image_pixel_coords,
+	//	event_pos_in_image_pixel_coords, sf::Color::Black );
 	draw_line( prev_mouse_pos_in_image_pixel_coords,
-		event_pos_in_image_pixel_coords, sf::Color::Black );
+		event_pos_in_image_pixel_coords, 
+		the_palette_chooser_widget->palette.at
+		(the_palette_chooser_widget->current_color_index) );
 	
 }
 
@@ -328,6 +349,43 @@ void sfml_canvas_widget::mouseMoveEvent( QMouseEvent* event )
 //	//cout << event->x() << ", " << event->y() << endl;
 //}
 
+void sfml_canvas_widget::export_file_as( const string& output_file_name )
+{
+	png::image<png::index_pixel> index_pixel_image;
+	png::palette index_pixel_image_palette;
+	
+	index_pixel_image.resize( canvas_image.getSize().x,
+		canvas_image.getSize().y );
+	
+	const auto& palette = the_palette_chooser_widget->palette;
+	
+	for ( const sf::Color& the_sfml_color : palette )
+	{
+		index_pixel_image_palette.push_back
+			( sfml_color_to_png_color(the_sfml_color) );
+	}
+	index_pixel_image.set_palette(index_pixel_image_palette);
+	
+	for ( u32 j=0; j<canvas_image.getSize().y; ++j )
+	{
+		// Loop across rows before columns.
+		for ( u32 i=0; i<canvas_image.getSize().x; ++i )
+		{
+			for ( u32 k=0; k<palette.size(); ++k )
+			{
+				if ( canvas_image.getPixel( i, j ) == palette.at(k) )
+				{
+					index_pixel_image.set_pixel( i, j, 
+						png::index_pixel(k) );
+					break;
+				}
+			}
+		}
+	}
+	
+	index_pixel_image.write( output_file_name.c_str() );
+	
+}
 
 void sfml_canvas_widget::on_update()
 {

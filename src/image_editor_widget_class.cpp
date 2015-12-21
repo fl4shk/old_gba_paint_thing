@@ -164,4 +164,22 @@ void image_editor_widget::show_geometry_stuff()
 		<< scroll_area->frameGeometry().y() << endl;
 }
 
+void image_editor_widget::save_file()
+{
+	cout << "Saving....\n";
+	
+	the_sfml_canvas_widget->export_file();
+}
+
+void image_editor_widget::save_file_as()
+{
+	QString output_file_name = QFileDialog::getSaveFileName( this, 
+		tr("Save File"), QString(), tr("PNG File (*.png)") );
+	//cout << "This QString was obtained:  " 
+	//	<< output_file_name.toStdString() << endl;
+	
+	cout << "Saving....\n";
+	
+	the_sfml_canvas_widget->export_file_as(output_file_name.toStdString());
+}
 

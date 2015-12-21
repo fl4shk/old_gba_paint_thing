@@ -12,13 +12,6 @@ public:		// variables
 	
 public:		// functions
 	sfml_canvas_widget_base( QWidget* s_parent, const QPoint& s_position,
-	//// Regarding the number 17 used for the default frame_time parameter:
-	//// To make this widget update at a 60 Hz refresh rate, get the inverse
-	//// of the refresh rate.  ( 1 / ( 60 Hz) ) = 0.016666... seconds, or
-	//// about 17 milliseconds.  The frame_time parameter is an INTEGER
-	//// parameter specifying the number of milliseconds to wait for.
-	//// However, as expected, the milliseconds parameter probably doesn't
-	//// have a whole lot of precision anyway.
 		const QSize& s_size, u32 frame_time = 2 );
 	virtual ~sfml_canvas_widget_base();
 	
@@ -57,6 +50,10 @@ protected:		// variables
 	
 	string image_file_name;
 	
+	sf::RenderTexture canvas_grid_render_target;
+	sf::Image canvas_pixel_grid_image;
+	sf::Image canvas_pixel_grid_texture;
+	sf::Image canvas_pixel_grid_sprite;
 	
 	
 	sf::Image canvas_image;
@@ -65,6 +62,9 @@ protected:		// variables
 	
 	// This is for line drawing.
 	QPoint prev_mouse_pos;
+	
+	bool pixel_grid_enabled_recently, pixel_grid_disabled_recently,
+		pixel_grid_enabled;
 	
 public:		// variables
 	
@@ -111,10 +111,26 @@ public:		// functions
 	void draw_line( const sf::Vector2i& pos_0, 
 		const sf::Vector2i& pos_1, const sf::Color& color );
 	
+	inline bool get_pixel_grid_enabled() const
+	{
+		return pixel_grid_enabled;
+	}
+	
+	void enable_pixel_grid();
+	void disable_pixel_grid();
+	
+	inline void export_file()
+	{
+		export_file_as(image_file_name);
+	}
+	void export_file_as( const string& output_file_name );
+	
+	
 protected:		// functions
 	void mousePressEvent( QMouseEvent* event );
 	void mouseMoveEvent( QMouseEvent* event );
 	//void mouseReleaseEvent( QMouseEvent* event );
+	
 	
 	inline void on_init()
 	{
@@ -124,6 +140,7 @@ protected:		// functions
 		//open_image();
 	}
 	void on_update();
+	
 	
 	friend class palette_chooser_widget;
 };

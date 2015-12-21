@@ -56,6 +56,8 @@ using namespace std;
 #include <QTimer>
 #include <QButtonGroup>
 
+#include <QFileDialog>
+
 
 // SFML Stuff
 #include <SFML/Graphics.hpp>
@@ -67,5 +69,6 @@ using namespace std;
 #include "misc_types.hpp"
 #include "misc_funcs.hpp"
 
+#include "color_stuff.hpp"
 
 #endif		// misc_includes_hpp

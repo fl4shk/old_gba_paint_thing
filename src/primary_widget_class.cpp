@@ -9,6 +9,8 @@ const QString primary_widget::laugh_icon_file_name
 primary_widget::primary_widget( vector<string>& s_argv_copy, 
 	QWidget* parent ) : QMainWindow(parent), argv_copy(s_argv_copy)
 {
+	generate_central_widget();
+	
 	generate_menus();
 	
 	if ( !generate_toolbar() )
@@ -16,7 +18,6 @@ primary_widget::primary_widget( vector<string>& s_argv_copy,
 		quit_non_slot();
 	}
 	
-	generate_central_widget();
 	
 	//if ( !the_central_widget->open_image
 	//	(QString("background_tiles_modded.png")) )
@@ -31,10 +32,17 @@ primary_widget::primary_widget( vector<string>& s_argv_copy,
 void primary_widget::generate_menus()
 {
 	menu_laugh_action = new QAction( "&Laugh", this );
+	menu_save_action = new QAction( "&Save", this );
+	menu_save_as_action = new QAction( "&Save As", this );
 	menu_quit_action = new QAction( "&Quit", this );
 	
 	connect( menu_laugh_action, &QAction::triggered, this, 
 		&primary_widget::laugh );
+	connect( menu_save_action, &QAction::triggered, the_central_widget,
+		&image_editor_widget::save_file );
+	connect( menu_save_as_action, &QAction::triggered, the_central_widget,
+		&image_editor_widget::save_file_as );
+	
 	connect( menu_quit_action, &QAction::triggered, this, 
 		&primary_widget::quit );
 	
@@ -42,6 +50,9 @@ void primary_widget::generate_menus()
 	second_menu = menuBar()->addMenu("&Second");
 	
 	file_menu->addAction(menu_laugh_action);
+	file_menu->addAction(menu_save_action);
+	file_menu->addAction(menu_save_as_action);
+	file_menu->addSeparator();
 	file_menu->addAction(menu_quit_action);
 	
 	second_menu->addAction(menu_quit_action);
