@@ -1,14 +1,15 @@
 #include "palette_manipulator_core_widget_class.hpp"
+
 palette_manipulator_core_widget::palette_manipulator_core_widget
 	( QWidget* s_parent, const QPoint& s_position, const QSize& s_size ) 
 	: sfml_canvas_widget_base( s_parent, s_position, s_size ),
-	current_color_index(0), palette_modified_recently(false)
+	left_current_color_index(0), right_current_color_index(0),
+	palette_modified_recently(false)
 {
 	
-	palette_render_texture.create
-		( num_colors_per_row * palette_slot_outer_width, 
-		num_colors_per_column * palette_slot_outer_height );
-	palette_render_texture.clear( sf::Color::White );
+	palette_render_texture.create( num_colors_per_row * slot_outer_width, 
+		num_colors_per_column * slot_outer_height );
+	palette_render_texture.clear(sf::Color::White);
 	palette_texture = palette_render_texture.getTexture();
 	palette_sprite.setTexture(palette_texture);
 	
@@ -18,35 +19,33 @@ palette_manipulator_core_widget::palette_manipulator_core_widget
 		palette_render_texture.getSize().y ) );
 	
 	
-	palette_slot_inner_image.create( 1, 1, sf::Color::Blue );
-	//palette_slot_outer_image.create( palette_slot_outer_width, 
-	//	palette_slot_outer_height, sf::Color( 192, 192, 192 ) );
-	palette_slot_outer_usual_image.create( palette_slot_outer_width, 
-		palette_slot_outer_height, sf::Color::Black );
-	palette_slot_outer_selected_image.create( palette_slot_outer_width, 
-		palette_slot_outer_height, sf::Color::Red );
+	slot_inner_image.create( 1, 1, sf::Color::Blue );
+	slot_outer_usual_image.create( slot_outer_width, slot_outer_height, 
+		sf::Color::Black );
+	slot_outer_left_selected_image.create( slot_outer_width, 
+		slot_outer_height, sf::Color::White );
+	slot_outer_right_selected_image.create( slot_outer_width, 
+		slot_outer_height, sf::Color::Cyan );
 	
-	palette_slot_inner_texture.loadFromImage(palette_slot_inner_image);
-	palette_slot_outer_usual_texture.loadFromImage
-		(palette_slot_outer_usual_image);
-	palette_slot_outer_selected_texture.loadFromImage
-		(palette_slot_outer_selected_image);
 	
-	palette_slot_inner_sprite.setTexture(palette_slot_inner_texture);
-	palette_slot_outer_usual_sprite.setTexture
-		(palette_slot_outer_usual_texture);
-	palette_slot_outer_selected_sprite.setTexture
-		(palette_slot_outer_selected_texture);
+	slot_inner_texture.loadFromImage(slot_inner_image);
+	slot_outer_usual_texture.loadFromImage(slot_outer_usual_image);
+	slot_outer_left_selected_texture.loadFromImage
+		(slot_outer_left_selected_image);
+	slot_outer_right_selected_texture.loadFromImage
+		(slot_outer_right_selected_image);
 	
-	palette_slot_inner_sprite.setScale( palette_slot_inner_width,
-		palette_slot_inner_height );
 	
-	//// Temporary!
-	//for ( sf::Color& color : palette )
-	//{
-	//	// Orange!
-	//	color = sf::Color( 255, 120, 0 );
-	//}
+	slot_inner_sprite.setTexture(slot_inner_texture);
+	slot_outer_usual_sprite.setTexture(slot_outer_usual_texture);
+	slot_outer_left_selected_sprite.setTexture
+		(slot_outer_left_selected_texture);
+	slot_outer_right_selected_sprite.setTexture
+		(slot_outer_right_selected_texture);
+	
+	slot_inner_sprite.setScale( slot_inner_width, slot_inner_height );
+	
+	
 }
 
 
@@ -106,19 +105,34 @@ bool palette_manipulator_core_widget::extract_palette_from_sfml_image
 	
 	return true;
 }
+
 void palette_manipulator_core_widget::mousePressEvent( QMouseEvent* event )
 {
 	sf::Vector2i event_pos_in_color_selection_coords
-		( event->x() / palette_slot_outer_width, 
-		event->y() / palette_slot_outer_height );
+		( event->x() / slot_outer_width, 
+		event->y() / slot_outer_height );
 	
-	u32 n_current_color_index 
-		= color_selection_coords_to_current_color_index
-		(event_pos_in_color_selection_coords);
-	
-	if ( n_current_color_index < num_colors_per_palette )
+	if ( event->button() == Qt::LeftButton )
 	{
-		set_current_color_index(n_current_color_index);
+		u32 n_left_current_color_index 
+			= color_selection_coords_to_current_color_index
+			(event_pos_in_color_selection_coords);
+		
+		if ( n_left_current_color_index < num_colors_per_palette )
+		{
+			set_left_current_color_index(n_left_current_color_index);
+		}
+	}
+	else if ( event->button() == Qt::RightButton )
+	{
+		u32 n_right_current_color_index 
+			= color_selection_coords_to_current_color_index
+			(event_pos_in_color_selection_coords);
+		
+		if ( n_right_current_color_index < num_colors_per_palette )
+		{
+			set_right_current_color_index(n_right_current_color_index);
+		}
 	}
 	
 }
@@ -126,8 +140,8 @@ void palette_manipulator_core_widget::mousePressEvent( QMouseEvent* event )
 void palette_manipulator_core_widget::generate_palette_render_texture()
 {
 	palette_render_texture.clear( sf::Color::Green );
-	//palette_slot_inner_sprite.setPosition( 0, 0 );
-	//palette_slot_outer_sprite.setPosition( 0, 0 );
+	//slot_inner_sprite.setPosition( 0, 0 );
+	//slot_outer_sprite.setPosition( 0, 0 );
 	
 	//cout << palette_render_texture.getSize().x << ", " 
 	//	<< palette_render_texture.getSize().y << endl;
@@ -136,36 +150,46 @@ void palette_manipulator_core_widget::generate_palette_render_texture()
 	{
 		for ( u32 i=0; i<num_colors_per_row; ++i )
 		{
-			palette_slot_inner_image.setPixel( 0, 0, 
-				palette.at( j * num_colors_per_row + i ) );
-			palette_slot_inner_texture.loadFromImage
-				(palette_slot_inner_image);
+			slot_inner_image.setPixel( 0, 0, palette.at
+				( j * num_colors_per_row + i ) );
+			slot_inner_texture.loadFromImage(slot_inner_image);
 			
-			palette_slot_inner_sprite.setPosition
-				( i * palette_slot_outer_width + 1,
+			slot_inner_sprite.setPosition( i * slot_outer_width + 1,
 				palette_render_texture.getSize().y 
-				- ( ( j + 1 ) * palette_slot_outer_height - 1 ) );
+				- ( ( j + 1 ) * slot_outer_height - 1 ) );
 			
-			if ( current_color_index != j * num_colors_per_row + i )
+			// Highlight the SELECTED colors with a border, drawing the
+			// LEFT mouse button selected color one on top of the right
+			// mouse button selected color.
+			if ( left_current_color_index == j * num_colors_per_row + i )
 			{
-				palette_slot_outer_usual_sprite.setPosition
-					( palette_slot_inner_sprite.getPosition().x - 1,
-					palette_slot_inner_sprite.getPosition().y - 1 );
+				slot_outer_left_selected_sprite.setPosition
+					( slot_inner_sprite.getPosition().x - 1,
+					slot_inner_sprite.getPosition().y - 1 );
 				
 				palette_render_texture.draw
-					(palette_slot_outer_usual_sprite);
+					(slot_outer_left_selected_sprite);
+			}
+			else if ( right_current_color_index 
+				== j * num_colors_per_row + i )
+			{
+				slot_outer_right_selected_sprite.setPosition
+					( slot_inner_sprite.getPosition().x - 1,
+					slot_inner_sprite.getPosition().y - 1 );
+				
+				palette_render_texture.draw
+					(slot_outer_right_selected_sprite);
 			}
 			else
 			{
-				palette_slot_outer_selected_sprite.setPosition
-					( palette_slot_inner_sprite.getPosition().x - 1,
-					palette_slot_inner_sprite.getPosition().y - 1 );
+				slot_outer_usual_sprite.setPosition
+					( slot_inner_sprite.getPosition().x - 1,
+					slot_inner_sprite.getPosition().y - 1 );
 				
-				palette_render_texture.draw
-					(palette_slot_outer_selected_sprite);
+				palette_render_texture.draw(slot_outer_usual_sprite);
 			}
 			
-			palette_render_texture.draw(palette_slot_inner_sprite);
+			palette_render_texture.draw(slot_inner_sprite);
 		}
 	}
 	
@@ -179,7 +203,7 @@ void palette_manipulator_core_widget::on_update()
 		palette_modified_recently = false;
 		
 		generate_palette_render_texture();
-		palette_texture = palette_render_texture.getTexture();
+		//palette_texture = palette_render_texture.getTexture();
 	}
 	
 	//clear(sf::Color::White);

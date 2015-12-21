@@ -301,8 +301,23 @@ void sfml_canvas_widget::mousePressEvent( QMouseEvent* event )
 	}
 	
 	modified_recently = true;
-	canvas_image.setPixel( (u32)event_pos_in_image_pixel_coords.x,
-		(u32)event_pos_in_image_pixel_coords.y, sf::Color( 0, 0, 0 ) );
+	
+	if ( event->button() == Qt::LeftButton )
+	{
+		canvas_image.setPixel( (u32)event_pos_in_image_pixel_coords.x,
+			(u32)event_pos_in_image_pixel_coords.y, 
+			the_palette_manipulator_core_widget->palette.at
+			(the_palette_manipulator_core_widget
+			->left_current_color_index) );
+	}
+	else if ( event->button() == Qt::RightButton )
+	{
+		canvas_image.setPixel( (u32)event_pos_in_image_pixel_coords.x,
+			(u32)event_pos_in_image_pixel_coords.y, 
+			the_palette_manipulator_core_widget->palette.at
+			(the_palette_manipulator_core_widget
+			->right_current_color_index) );
+	}
 	
 }
 
@@ -337,10 +352,23 @@ void sfml_canvas_widget::mouseMoveEvent( QMouseEvent* event )
 	//modified_recently = true;
 	//draw_line( prev_mouse_pos_in_image_pixel_coords,
 	//	event_pos_in_image_pixel_coords, sf::Color::Black );
-	draw_line( prev_mouse_pos_in_image_pixel_coords,
-		event_pos_in_image_pixel_coords, 
-		the_palette_manipulator_core_widget->palette.at
-		(the_palette_manipulator_core_widget->current_color_index) );
+	
+	if ( event->buttons() == Qt::LeftButton )
+	{
+		draw_line( prev_mouse_pos_in_image_pixel_coords,
+			event_pos_in_image_pixel_coords, 
+			the_palette_manipulator_core_widget->palette.at
+			(the_palette_manipulator_core_widget
+			->left_current_color_index) );
+	}
+	else if ( event->buttons() == Qt::RightButton )
+	{
+		draw_line( prev_mouse_pos_in_image_pixel_coords,
+			event_pos_in_image_pixel_coords, 
+			the_palette_manipulator_core_widget->palette.at
+			(the_palette_manipulator_core_widget
+			->right_current_color_index) );
+	}
 	
 }
 
