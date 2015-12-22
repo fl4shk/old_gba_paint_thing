@@ -8,6 +8,7 @@
 #include <set>
 #include <map>
 #include <algorithm>
+#include <memory>
 using namespace std;
 
 #include <math.h>

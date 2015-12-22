@@ -8,3 +8,5 @@ src/tags
 src/types_c.taghl
 pngpp_test
 pngpp_test/*
+unique_ptr_test
+unique_ptr_test/*

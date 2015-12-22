@@ -31,6 +31,7 @@ image_editor_widget::image_editor_widget( vector<string>* s_argv_copy,
 		quit_non_slot();
 	}
 	
+	
 	// scroll_area stuff
 	scroll_area = new QScrollArea(this);
 	scroll_area->setWidget(the_sfml_canvas_widget);
@@ -132,6 +133,18 @@ void image_editor_widget::keyPressEvent( QKeyEvent* event )
 	else if ( event->key() == Qt::Key_Z )
 	{
 		zoom_out();
+	}
+	else if ( event->key() == Qt::Key_G )
+	{
+		// Temporary until a toggle button is created for this purpose.
+		if ( !the_sfml_canvas_widget->get_pixel_grid_enabled() )
+		{
+			the_sfml_canvas_widget->enable_pixel_grid();
+		}
+		else
+		{
+			the_sfml_canvas_widget->disable_pixel_grid();
+		}
 	}
 }
 

@@ -50,12 +50,28 @@ protected:		// variables
 	
 	string image_file_name;
 	
-	sf::RenderTexture canvas_grid_render_target;
-	sf::Image canvas_pixel_grid_image;
-	sf::Image canvas_pixel_grid_texture;
-	sf::Image canvas_pixel_grid_sprite;
+	sf::RenderTexture canvas_grid_render_texture;
+	
+	unique_ptr<sf::Image> canvas_pixel_grid_slot_image,
+		canvas_tile_grid_slot_image;
+	unique_ptr<sf::Texture> canvas_pixel_grid_slot_texture, 
+		canvas_tile_grid_slot_texture;
+	unique_ptr<sf::Sprite> canvas_pixel_grid_slot_sprite, 
+		canvas_tile_grid_slot_sprite;
+	
+	bool pixel_grid_enabled_recently, pixel_grid_enabled;
+	bool tile_grid_enabled_recently, tile_grid_enabled;
 	
 	
+	// Using "global" instances of canvas_image, canvas_texture,
+	// and canvas_sprite appears to cause weirdness, so perhaps using
+	// pointers for canvas_image, canvas_texture, and canvas_sprite would
+	// be a good idea.  In such a case, the new and delete operators would
+	// be used.
+	// This weirdness was discovered while the pixel grid display and tile
+	// grid display were being implemented.
+	// The create() method appears to be the easiest way to implement
+	// image resizing functionality.
 	sf::Image canvas_image;
 	sf::Texture canvas_texture;
 	sf::Sprite canvas_sprite;
@@ -63,10 +79,9 @@ protected:		// variables
 	// This is for line drawing.
 	QPoint prev_mouse_pos;
 	
-	bool pixel_grid_enabled_recently, pixel_grid_disabled_recently,
-		pixel_grid_enabled;
 	
-public:		// variables
+public:		// variables and constants
+	static constexpr u32 minimum_scale_factor_for_grid = 4;
 	
 	//bool zoomed_in_recently, zoomed_out_recently;
 	bool modified_recently, zoomed_recently;
@@ -120,6 +135,16 @@ public:		// functions
 	void enable_pixel_grid();
 	void disable_pixel_grid();
 	
+	
+	inline bool get_tile_grid_enabled() const
+	{
+		return tile_grid_enabled;
+	}
+	
+	void enable_tile_grid();
+	void disable_tile_grid();
+	
+	
 	// This is just a PNG exporter.
 	inline void export_file()
 	{
@@ -134,6 +159,7 @@ protected:		// functions
 	void mouseMoveEvent( QMouseEvent* event );
 	void mouseReleaseEvent( QMouseEvent* event );
 	
+	void generate_canvas_grid();
 	
 	inline void on_init()
 	{

@@ -83,12 +83,19 @@ sfml_canvas_widget::sfml_canvas_widget( QWidget* s_parent,
 	const string& s_image_file_name ) 
 	: sfml_canvas_widget_base( s_parent, s_position, s_size ),
 	the_palette_manipulator_core_widget(NULL), 
-	image_file_name(s_image_file_name), pixel_grid_enabled_recently(false),
-	pixel_grid_disabled_recently(false), pixel_grid_enabled(false),
+	
+	image_file_name(s_image_file_name), 
+	
+	pixel_grid_enabled_recently(false), pixel_grid_enabled(false),
+	
+	tile_grid_enabled_recently(false), tile_grid_enabled(false), 
+	
 	modified_recently(false), zoomed_recently(false), scale_factor(1), 
+	
 	view_center_x(0.0f), view_center_y(0.0f)
 {
 	apparent_view = getDefaultView();
+	
 }
 
 
@@ -270,16 +277,63 @@ void sfml_canvas_widget::draw_line( const sf::Vector2i& pos_0,
 void sfml_canvas_widget::enable_pixel_grid()
 {
 	pixel_grid_enabled_recently = true;
-	pixel_grid_disabled_recently = false;
 	pixel_grid_enabled = true;
 	
 }
 
 void sfml_canvas_widget::disable_pixel_grid()
 {
-	pixel_grid_enabled_recently = false;
-	pixel_grid_disabled_recently = true;
 	pixel_grid_enabled = false;
+}
+
+void sfml_canvas_widget::enable_tile_grid()
+{
+	tile_grid_enabled_recently = true;
+	tile_grid_enabled = true;
+	
+}
+
+void sfml_canvas_widget::disable_tile_grid()
+{
+	tile_grid_enabled = false;
+}
+
+void sfml_canvas_widget::export_file_as( const string& output_file_name )
+{
+	png::image<png::index_pixel> index_pixel_image;
+	png::palette index_pixel_image_palette;
+	
+	index_pixel_image.resize( canvas_image.getSize().x,
+		canvas_image.getSize().y );
+	
+	const auto& palette = the_palette_manipulator_core_widget->palette;
+	
+	for ( const sf::Color& the_sfml_color : palette )
+	{
+		index_pixel_image_palette.push_back
+			( sfml_color_to_png_color(the_sfml_color) );
+	}
+	index_pixel_image.set_palette(index_pixel_image_palette);
+	
+	for ( u32 j=0; j<canvas_image.getSize().y; ++j )
+	{
+		// Loop across rows before columns.
+		for ( u32 i=0; i<canvas_image.getSize().x; ++i )
+		{
+			for ( u32 k=0; k<palette.size(); ++k )
+			{
+				if ( canvas_image.getPixel( i, j ) == palette.at(k) )
+				{
+					index_pixel_image.set_pixel( i, j, 
+						png::index_pixel(k) );
+					break;
+				}
+			}
+		}
+	}
+	
+	index_pixel_image.write( output_file_name.c_str() );
+	
 }
 
 void sfml_canvas_widget::mousePressEvent( QMouseEvent* event )
@@ -346,7 +400,6 @@ void sfml_canvas_widget::mouseMoveEvent( QMouseEvent* event )
 		= sf::Vector2i( (int)prev_mouse_pos_in_image_coords.x,
 		(int)prev_mouse_pos_in_image_coords.y );
 	
-	
 	prev_mouse_pos = event->pos();
 	
 	//modified_recently = true;
@@ -372,70 +425,138 @@ void sfml_canvas_widget::mouseMoveEvent( QMouseEvent* event )
 	
 }
 
+// mouseReleaseEvent() will come in handy once a "line" tool exists.
 void sfml_canvas_widget::mouseReleaseEvent( QMouseEvent* event )
 {
 	//cout << event->x() << ", " << event->y() << endl;
 }
 
 
-void sfml_canvas_widget::export_file_as( const string& output_file_name )
+void sfml_canvas_widget::generate_canvas_grid()
 {
-	png::image<png::index_pixel> index_pixel_image;
-	png::palette index_pixel_image_palette;
-	
-	index_pixel_image.resize( canvas_image.getSize().x,
-		canvas_image.getSize().y );
-	
-	const auto& palette = the_palette_manipulator_core_widget->palette;
-	
-	for ( const sf::Color& the_sfml_color : palette )
+	if ( scale_factor < minimum_scale_factor_for_grid )
 	{
-		index_pixel_image_palette.push_back
-			( sfml_color_to_png_color(the_sfml_color) );
+		canvas_grid_render_texture.create( 1, 1 );
+		canvas_grid_render_texture.clear(sf::Color::Black);
+		return;
 	}
-	index_pixel_image.set_palette(index_pixel_image_palette);
 	
-	for ( u32 j=0; j<canvas_image.getSize().y; ++j )
+	
+	if ( get_pixel_grid_enabled() )
 	{
-		// Loop across rows before columns.
-		for ( u32 i=0; i<canvas_image.getSize().x; ++i )
+		canvas_grid_render_texture.create( getSize().x, getSize().y );
+		//canvas_grid_render_texture.clear(sf::Color::Black);
+		
+		cout << scale_factor << endl;
+		
+		//sf::Image canvas_pixel_grid_slot_image;
+		canvas_pixel_grid_slot_image.reset(new sf::Image);
+		canvas_pixel_grid_slot_image->create( scale_factor, scale_factor, 
+			sf::Color( 0, 0, 0, 0 ) );
+		
+		// Vertical line
+		for ( u32 j=0; j<canvas_pixel_grid_slot_image->getSize().y; ++j )
 		{
-			for ( u32 k=0; k<palette.size(); ++k )
+			canvas_pixel_grid_slot_image->setPixel
+				( canvas_pixel_grid_slot_image->getSize().x - 1, j,
+				sf::Color( 64, 64, 64, 255 ) );
+		}
+		
+		// Horizontal line
+		for ( u32 i=0; i<canvas_pixel_grid_slot_image->getSize().x; ++i )
+		{
+			canvas_pixel_grid_slot_image->setPixel( i, 
+				canvas_pixel_grid_slot_image->getSize().y - 1,
+				sf::Color( 64, 64, 64, 255 ) );
+		}
+		
+		canvas_pixel_grid_slot_texture.reset(new sf::Texture);
+		canvas_pixel_grid_slot_texture->loadFromImage
+			(*canvas_pixel_grid_slot_image);
+		
+		canvas_pixel_grid_slot_sprite.reset(new sf::Sprite);
+		canvas_pixel_grid_slot_sprite->setTexture
+			(*canvas_pixel_grid_slot_texture);
+		
+		for ( u32 j=0; j<canvas_image.getSize().y; ++j )
+		{
+			for ( u32 i=0; i<canvas_image.getSize().x; ++i )
 			{
-				if ( canvas_image.getPixel( i, j ) == palette.at(k) )
-				{
-					index_pixel_image.set_pixel( i, j, 
-						png::index_pixel(k) );
-					break;
-				}
+				canvas_pixel_grid_slot_sprite->setPosition
+					( i * canvas_pixel_grid_slot_image->getSize().x, 
+					j * canvas_pixel_grid_slot_image->getSize().y );
+				canvas_grid_render_texture.draw
+					(*canvas_pixel_grid_slot_sprite);
 			}
 		}
+		
+		//canvas_grid_render_texture.draw(*canvas_pixel_grid_slot_sprite);
+		
+		//cout << "canvas_grid_render_texture generated!\n";
+	}
+	if ( get_tile_grid_enabled() )
+	{
+		
 	}
 	
-	index_pixel_image.write( output_file_name.c_str() );
 	
+	if (pixel_grid_enabled_recently)
+	{
+		pixel_grid_enabled_recently = false;
+	}
+	if (tile_grid_enabled_recently)
+	{
+		tile_grid_enabled_recently = false;
+	}
+	
+	canvas_grid_render_texture.display();
 }
+
+
 
 void sfml_canvas_widget::on_update()
 {
-	if ( zoomed_recently )
+	if (zoomed_recently)
 	{
 		zoomed_recently = false;
 		full_resize(QSize( canvas_image.getSize().x * scale_factor, 
 			canvas_image.getSize().y * scale_factor ));
 		
+		if ( get_pixel_grid_enabled() || get_tile_grid_enabled() )
+		{
+			generate_canvas_grid();
+		}
+		
 		canvas_sprite.setScale( scale_factor, scale_factor );
 	}
-	if ( modified_recently )
+	if (modified_recently)
 	{
 		modified_recently = false;
 		canvas_texture.loadFromImage(canvas_image);
 	}
 	
+	// Instead of generating the pixel grid and tile grid every frame, only
+	// do it if they have been recently enabled (or if they're enabled and
+	// zooming happened recently).
+	if ( pixel_grid_enabled_recently || tile_grid_enabled_recently  )
+	{
+		generate_canvas_grid();
+	}
+	//generate_canvas_grid();
+	
 	//clear(sf::Color( 0, 128, 0 ));
 	// This clear() call is probably not necessary.
 	clear(sf::Color::White);
 	draw(canvas_sprite);
+	
+	if ( ( get_pixel_grid_enabled() || get_tile_grid_enabled() )
+		&& scale_factor >= minimum_scale_factor_for_grid )
+	{
+		sf::Sprite canvas_grid_full_sprite
+			(canvas_grid_render_texture.getTexture());
+		draw(canvas_grid_full_sprite);
+		
+	}
 }
 
 

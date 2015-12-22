@@ -16,6 +16,22 @@ inline png::color sfml_color_to_png_color
 		the_sfml_color.b );
 }
 
+inline u8 color_max_3( const sf::Color& the_color )
+{
+	return (u8)( ( the_color.r >= the_color.g 
+		&& the_color.r >= the_color.b ) ? the_color.r 
+		: ( ( the_color.g > the_color.r && the_color.g > the_color.b ) 
+		? the_color.g : the_color.b ) );
+}
+
+inline u8 color_min_3( const sf::Color& the_color )
+{
+	return (u8)( ( the_color.r <= the_color.g 
+		&& the_color.r <= the_color.b ) ? the_color.r 
+		: ( ( the_color.g < the_color.r && the_color.g < the_color.b ) 
+		? the_color.g : the_color.b ) );
+}
+
 class rgb15
 {
 public:		// constants
@@ -23,7 +39,8 @@ public:		// constants
 		blue_shift = 0xa; 
 	static constexpr u32 red_mask = 0x001f, green_mask = 0x03e0,
 		blue_mask = 0x7c00;
-	static constexpr u32 individual_component_mask = 0x1f;
+	static constexpr u32 individual_component_mask = 0x1f,
+		component_max_val = 0x1f;
 	static constexpr u32 rgb24_shift = 0x3;
 	
 protected:		// variables
@@ -39,28 +56,37 @@ public:		// functions
 	
 	inline u32 get_red() const
 	{
-		return ( red & individual_component_mask );
+		//return ( red & individual_component_mask );
+		return ( red <= component_max_val ) ? red : component_max_val;
 	}
 	inline u32 get_green() const
 	{
-		return ( green & individual_component_mask );
+		//return ( green & individual_component_mask );
+		return ( green <= component_max_val ) ? green : component_max_val;
 	}
 	inline u32 get_blue() const
 	{
-		return ( blue & individual_component_mask );
+		//return ( blue & individual_component_mask );
+		return ( blue <= component_max_val ) ? blue : component_max_val;
 	}
 	
 	inline void set_red( u32 n_red )
 	{
-		red = n_red & individual_component_mask;
+		//red = n_red & individual_component_mask;
+		red = ( n_red <= component_max_val ) ? n_red 
+			: component_max_val;
 	}
 	inline void set_green( u32 n_green )
 	{
-		green = n_green & individual_component_mask;
+		//green = n_green & individual_component_mask;
+		green = ( n_green <= component_max_val ) ? n_green 
+			: component_max_val;
 	}
 	inline void set_blue( u32 n_blue )
 	{
-		blue = n_blue & individual_component_mask;
+		//blue = n_blue & individual_component_mask;
+		blue = ( n_blue <= component_max_val ) ? n_blue 
+			: component_max_val;
 	}
 	
 	inline u16 to_u16() const
@@ -101,14 +127,17 @@ public:		// functions
 
 
 
+// The reason this is used instead of the lightness or hue comparison
+// structs is because this algorithm DOES allow ANY sf::Color to be used in
+// the std::set or std::map, not counting alpha values.
 struct sfml_color_compare_for_set_or_map
 {
 public:		// functions
 	inline bool operator () ( const sf::Color& lhs, const sf::Color& rhs ) 
 		const
 	{
-		u32 lhs_as_u32 = ( lhs.r << 16 ) | ( lhs.g << 8 ) | lhs.b,
-			rhs_as_u32 = ( rhs.r << 16 ) | ( rhs.g << 8 ) | rhs.b;
+		u32 lhs_as_u32 = ( lhs.b << 16 ) | ( lhs.g << 8 ) | lhs.r,
+			rhs_as_u32 = ( rhs.b << 16 ) | ( rhs.g << 8 ) | rhs.r;
 		
 		return ( lhs_as_u32 < rhs_as_u32 );
 	}
@@ -120,25 +149,6 @@ public:		// functions
 	inline bool operator () ( const sf::Color& lhs, 
 		const sf::Color& rhs ) const
 	{
-		auto color_max_3 = [&]( const sf::Color& the_color ) -> u8
-		{
-			return ( ( the_color.r >= the_color.g 
-				&& the_color.r >= the_color.b ) 
-				? the_color.r 
-				: ( ( the_color.g > the_color.r 
-				&& the_color.g > the_color.b ) 
-				? the_color.g : the_color.b ) );
-		};
-		auto color_min_3 = [&]( const sf::Color& the_color ) -> u8
-		{
-			return ( ( the_color.r <= the_color.g 
-				&& the_color.r <= the_color.b ) 
-				? the_color.r 
-				: ( ( the_color.g < the_color.r 
-				&& the_color.g < the_color.b ) 
-				? the_color.g : the_color.b ) );
-		};
-		
 		u8 lhs_max = color_max_3(lhs);
 		u8 lhs_min = color_min_3(lhs);
 		
@@ -158,25 +168,6 @@ public:		// functions
 	inline bool operator () ( const sf::Color& lhs, 
 		const sf::Color& rhs ) const
 	{
-		auto color_max_3 = [&]( const sf::Color& the_color ) -> u8
-		{
-			return ( ( the_color.r >= the_color.g 
-				&& the_color.r >= the_color.b ) 
-				? the_color.r 
-				: ( ( the_color.g > the_color.r 
-				&& the_color.g > the_color.b ) 
-				? the_color.g : the_color.b ) );
-		};
-		auto color_min_3 = [&]( const sf::Color& the_color ) -> u8
-		{
-			return ( ( the_color.r <= the_color.g 
-				&& the_color.r <= the_color.b ) 
-				? the_color.r 
-				: ( ( the_color.g < the_color.r 
-				&& the_color.g < the_color.b ) 
-				? the_color.g : the_color.b ) );
-		};
-		
 		u8 lhs_max = color_max_3(lhs);
 		u8 lhs_min = color_min_3(lhs);
 		

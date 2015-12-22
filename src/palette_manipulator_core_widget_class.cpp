@@ -109,6 +109,8 @@ bool palette_manipulator_core_widget::extract_palette_from_sfml_image
 		++palette_true_end_iter;
 	}
 	
+	// This is not a completely necessary thing to do, but it makes the
+	// generated palette order nice.
 	sort( palette.begin(), palette_true_end_iter,
 		sfml_color_compare_with_hue() );
 	
@@ -148,12 +150,9 @@ void palette_manipulator_core_widget::mousePressEvent( QMouseEvent* event )
 
 void palette_manipulator_core_widget::generate_palette_render_texture()
 {
-	palette_render_texture.clear( sf::Color::Green );
-	//slot_inner_sprite.setPosition( 0, 0 );
-	//slot_outer_sprite.setPosition( 0, 0 );
-	
-	//cout << palette_render_texture.getSize().x << ", " 
-	//	<< palette_render_texture.getSize().y << endl;
+	//cout << "palette_render_texture:  " 
+	//	<< palette_render_texture.setActive(true) << endl;
+	palette_render_texture.clear(sf::Color::Green);
 	
 	for ( u32 j=0; j<num_colors_per_column; ++j )
 	{
@@ -163,9 +162,12 @@ void palette_manipulator_core_widget::generate_palette_render_texture()
 				( j * num_colors_per_row + i ) );
 			slot_inner_texture.loadFromImage(slot_inner_image);
 			
+			//slot_inner_sprite.setPosition( i * slot_outer_width + 1,
+			//	palette_render_texture.getSize().y 
+			//	- ( ( j + 1 ) * slot_outer_height - 1 ) );
+			
 			slot_inner_sprite.setPosition( i * slot_outer_width + 1,
-				palette_render_texture.getSize().y 
-				- ( ( j + 1 ) * slot_outer_height - 1 ) );
+				j * slot_outer_height + 1 );
 			
 			// Highlight the SELECTED colors with a border, drawing the
 			// LEFT mouse button selected color one on top of the right
@@ -202,6 +204,7 @@ void palette_manipulator_core_widget::generate_palette_render_texture()
 		}
 	}
 	
+	palette_render_texture.display();
 	palette_texture = palette_render_texture.getTexture();
 }
 
