@@ -102,6 +102,15 @@ bool palette_manipulator_core_widget::extract_palette_from_sfml_image
 		}
 	}
 	
+	auto palette_true_end_iter = palette.begin();
+	
+	for ( u32 i=0; i<unique_sfml_colors_set.size(); ++i )
+	{
+		++palette_true_end_iter;
+	}
+	
+	sort( palette.begin(), palette_true_end_iter,
+		sfml_color_compare_with_hue() );
 	
 	return true;
 }

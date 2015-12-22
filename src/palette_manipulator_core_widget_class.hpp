@@ -21,7 +21,7 @@ protected:		// variables
 	sf::Texture palette_texture;
 	sf::Sprite palette_sprite;
 	
-	// These six variables are used for drawing the palette into
+	// These variables are used for drawing the palette into
 	// palette_render_texture.
 	sf::Image slot_inner_image, slot_outer_usual_image,
 		slot_outer_left_selected_image,

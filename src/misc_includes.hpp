@@ -7,7 +7,10 @@
 #include <fstream>
 #include <set>
 #include <map>
+#include <algorithm>
 using namespace std;
+
+#include <math.h>
 
 // Qt Stuff
 #include <QApplication>

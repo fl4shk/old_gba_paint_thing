@@ -372,10 +372,11 @@ void sfml_canvas_widget::mouseMoveEvent( QMouseEvent* event )
 	
 }
 
-//void sfml_canvas_widget::mouseReleaseEvent( QMouseEvent* event )
-//{
-//	//cout << event->x() << ", " << event->y() << endl;
-//}
+void sfml_canvas_widget::mouseReleaseEvent( QMouseEvent* event )
+{
+	//cout << event->x() << ", " << event->y() << endl;
+}
+
 
 void sfml_canvas_widget::export_file_as( const string& output_file_name )
 {

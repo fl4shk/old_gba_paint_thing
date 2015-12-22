@@ -114,7 +114,7 @@ public:		// functions
 	}
 };
 
-struct sfml_color_compare_for_sort
+struct sfml_color_compare_with_lightness
 {
 public:		// functions
 	inline bool operator () ( const sf::Color& lhs, 
@@ -149,6 +149,89 @@ public:		// functions
 		u32 rhs_lightness = ( rhs_max + rhs_min ) / 2;
 		
 		return ( lhs_lightness < rhs_lightness );
+	}
+};
+
+struct sfml_color_compare_with_hue
+{
+public:		// functions
+	inline bool operator () ( const sf::Color& lhs, 
+		const sf::Color& rhs ) const
+	{
+		auto color_max_3 = [&]( const sf::Color& the_color ) -> u8
+		{
+			return ( ( the_color.r >= the_color.g 
+				&& the_color.r >= the_color.b ) 
+				? the_color.r 
+				: ( ( the_color.g > the_color.r 
+				&& the_color.g > the_color.b ) 
+				? the_color.g : the_color.b ) );
+		};
+		auto color_min_3 = [&]( const sf::Color& the_color ) -> u8
+		{
+			return ( ( the_color.r <= the_color.g 
+				&& the_color.r <= the_color.b ) 
+				? the_color.r 
+				: ( ( the_color.g < the_color.r 
+				&& the_color.g < the_color.b ) 
+				? the_color.g : the_color.b ) );
+		};
+		
+		u8 lhs_max = color_max_3(lhs);
+		u8 lhs_min = color_min_3(lhs);
+		
+		u8 rhs_max = color_max_3(rhs);
+		u8 rhs_min = color_min_3(rhs);
+		
+		u8 lhs_c = lhs_max - lhs_min;
+		u8 rhs_c = rhs_max - rhs_min;
+		
+		// Consider the hue to be 0 if C == 0.  Yes, this is a convention
+		// thing.
+		if ( lhs_c == 0 )
+		{
+			return false;
+		}
+		else if ( lhs_c > 0 && rhs_c == 0 )
+		{
+			return true;
+		}
+		
+		double lhs_hue, rhs_hue;
+		
+		if ( lhs_max == lhs.r )
+		{
+			lhs_hue = fmod( ( (double)(lhs.g) - (double)(lhs.b) )
+				/ (double)(lhs_c), 6.0f );
+		}
+		else if ( lhs_max == lhs.g )
+		{
+			lhs_hue = ( ( (double)(lhs.b) - (double)(lhs.r) ) 
+				/ (double)(lhs_c) ) + 2.0f;
+		}
+		else //if ( lhs_max == lhs.b )
+		{
+			lhs_hue = ( ( (double)(lhs.r) - (double)(lhs.g) ) 
+				/ (double)(lhs_c) ) + 4.0f;
+		}
+		
+		if ( rhs_max == rhs.r )
+		{
+			rhs_hue = fmod( ( (double)(rhs.g) - (double)(rhs.b) )
+				/ (double)(rhs_c), 6.0f );
+		}
+		else if ( rhs_max == rhs.g )
+		{
+			rhs_hue = ( ( (double)(rhs.b) - (double)(rhs.r) ) 
+				/ (double)(rhs_c) ) + 2.0f;
+		}
+		else //if ( rhs_max == rhs.b )
+		{
+			rhs_hue = ( ( (double)(rhs.r) - (double)(rhs.g) ) 
+				/ (double)(rhs_c) ) + 4.0f;
+		}
+		
+		return ( lhs_hue < rhs_hue );
 	}
 };
 

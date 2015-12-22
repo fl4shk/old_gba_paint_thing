@@ -120,17 +120,19 @@ public:		// functions
 	void enable_pixel_grid();
 	void disable_pixel_grid();
 	
+	// This is just a PNG exporter.
 	inline void export_file()
 	{
 		export_file_as(image_file_name);
 	}
+	// This is just a PNG exporter.
 	void export_file_as( const string& output_file_name );
 	
 	
 protected:		// functions
 	void mousePressEvent( QMouseEvent* event );
 	void mouseMoveEvent( QMouseEvent* event );
-	//void mouseReleaseEvent( QMouseEvent* event );
+	void mouseReleaseEvent( QMouseEvent* event );
 	
 	
 	inline void on_init()
