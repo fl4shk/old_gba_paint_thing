@@ -140,10 +140,26 @@ void image_editor_widget::keyPressEvent( QKeyEvent* event )
 		if ( !the_sfml_canvas_widget->get_pixel_grid_enabled() )
 		{
 			the_sfml_canvas_widget->enable_pixel_grid();
+			//cout << "Pixel grid now enabled.\n";
 		}
 		else
 		{
 			the_sfml_canvas_widget->disable_pixel_grid();
+			//cout << "Pixel grid now disabled.\n";
+		}
+	}
+	else if ( event->key() == Qt::Key_T )
+	{
+		// Temporary until a toggle button is created for this purpose.
+		if ( !the_sfml_canvas_widget->get_tile_grid_enabled() )
+		{
+			the_sfml_canvas_widget->enable_tile_grid();
+			//cout << "Tile grid now enabled.\n";
+		}
+		else
+		{
+			the_sfml_canvas_widget->disable_tile_grid();
+			//cout << "Tile grid now disabled.\n";
 		}
 	}
 }

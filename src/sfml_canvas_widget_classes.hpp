@@ -50,7 +50,8 @@ protected:		// variables
 	
 	string image_file_name;
 	
-	sf::RenderTexture canvas_grid_render_texture;
+	sf::RenderTexture canvas_pixel_grid_render_texture,
+		canvas_tile_grid_render_texture;
 	
 	unique_ptr<sf::Image> canvas_pixel_grid_slot_image,
 		canvas_tile_grid_slot_image;
@@ -72,16 +73,19 @@ protected:		// variables
 	// grid display were being implemented.
 	// The create() method appears to be the easiest way to implement
 	// image resizing functionality.
-	sf::Image canvas_image;
-	sf::Texture canvas_texture;
-	sf::Sprite canvas_sprite;
+	unique_ptr<sf::Image> canvas_image;
+	unique_ptr<sf::Texture> canvas_texture;
+	unique_ptr<sf::Sprite> canvas_sprite;
 	
 	// This is for line drawing.
 	QPoint prev_mouse_pos;
 	
 	
 public:		// variables and constants
-	static constexpr u32 minimum_scale_factor_for_grid = 4;
+	static constexpr u32 minimum_scale_factor_for_pixel_grid = 8,
+		minimum_scale_factor_for_tile_grid = 2;
+	static constexpr u32 num_pixels_per_tile_row = 8,
+		num_pixels_per_tile_column = 8;
 	
 	//bool zoomed_in_recently, zoomed_out_recently;
 	bool modified_recently, zoomed_recently;
@@ -119,8 +123,8 @@ public:		// functions
 	inline bool point_is_in_image( const sf::Vector2i& pos )
 	{
 		return ( ( pos.x >= 0 ) 
-			&& ( pos.x < (int)canvas_image.getSize().x ) && ( pos.y >= 0 ) 
-			&& ( pos.y < (int)canvas_image.getSize().y ) );
+			&& ( pos.x < (int)canvas_image->getSize().x ) && ( pos.y >= 0 ) 
+			&& ( pos.y < (int)canvas_image->getSize().y ) );
 	}
 	
 	// This is a purely integer-based line drawing algorithm.
@@ -159,13 +163,14 @@ protected:		// functions
 	void mouseMoveEvent( QMouseEvent* event );
 	void mouseReleaseEvent( QMouseEvent* event );
 	
-	void generate_canvas_grid();
+	void generate_canvas_pixel_grid();
+	void generate_canvas_tile_grid();
 	
 	inline void on_init()
 	{
 		cout << "sfml_canvas_widget initialized!\n";
 		
-		//canvas_image.loadFromFile(string("the_powerup_gfx.png"));
+		//canvas_image->loadFromFile(string("the_powerup_gfx.png"));
 		//open_image();
 	}
 	void on_update();
