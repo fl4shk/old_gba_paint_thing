@@ -6,7 +6,7 @@ This is my original attempt at making an image editor for the purpose of
 creating/editing graphics for GBA programs.
 
 I've made a new repository
-[here](https://github.com/fl4shk/gba_paint_thing).
+[here](https://github.com/fl4shk/fl4paint).
 
 
 ## Old Description
