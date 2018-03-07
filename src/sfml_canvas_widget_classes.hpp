@@ -12,7 +12,7 @@ public:		// variables
 	
 public:		// functions
 	sfml_canvas_widget_base( QWidget* s_parent, const QPoint& s_position,
-		const QSize& s_size, u32 frame_time = 2 );
+		const QSize& s_size, u32 frame_time = 1 );
 	virtual ~sfml_canvas_widget_base();
 	
 	

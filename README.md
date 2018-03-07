@@ -1,5 +1,17 @@
-gba\_paint\_thing
-=================
+# old\_gba\_paint\_thing
+
+## Updated Description
+
+This is my original attempt at making an image editor for the purpose of
+creating/editing graphics for GBA programs.
+
+I've made a new repository
+[here](https://github.com/fl4shk/gba_paint_thing).
+
+
+## Old Description
+
+# gba\_paint\_thing
 
 This doesn't do very much yet.
 
